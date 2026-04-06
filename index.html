@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="「辞め時かな」と思ったら、まずここで話してみよう。職場のドロドロした悩みを、友達・お母さん・ギャルなど5つの話し相手AIが一緒に整理。無料・登録不要。">
+<meta property="og:title" content="ムリです｜辞め時がわからないあなたへ。職場の悩みをAIと整理しよう">
+<meta property="og:description" content="上司が生理的に無理、板挟みがつらい、辞めるべきか迷っている。そのリアルな気持ち、5つの話し相手AIが一緒に整理します。無料・登録不要。">
+<meta property="og:type" content="website">
+<title>ムリです｜辞め時がわからないあなたへ。職場の悩みをAIと整理しよう</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FAFAF7;
+  --dark:#1A1816;
+  --text:#2C2A27;
+  --muted:#6B6560;
+  --faint:#ABA59D;
+  --border:#E8E4DC;
+  --accent:#E07B54;
+  --accent-d:#C4603A;
+  --accent-l:#FDF0EB;
+  --warm:#F5F0E8;
+  --surface:#FFFFFF;
+  --green:#1D7A5A;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,250,247,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.nav-logo-text{font-weight:700;font-size:14px;color:var(--dark);letter-spacing:.02em}
+.nav-links{display:flex;align-items:center;gap:24px}
+.nav-links a{text-decoration:none;font-size:13px;color:var(--muted);transition:color .2s}
+.nav-links a:hover{color:var(--dark)}
+.nav-cta{background:var(--accent);color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;transition:background .2s;white-space:nowrap}
+.nav-cta:hover{background:var(--accent-d)}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--dark);border-radius:2px;transition:all .2s}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 24px 60px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 70% 40%,#FDE8DC 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 20% 80%,#EEF8F3 0%,transparent 60%);pointer-events:none}
+.hero-inner{max-width:1080px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent-l);border:1px solid #F5C4AD;border-radius:20px;padding:5px 14px;font-size:12px;color:var(--accent);font-weight:500;margin-bottom:20px}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{font-family:'Noto Serif JP',serif;font-size:clamp(26px,4vw,44px);font-weight:600;line-height:1.4;color:var(--dark);margin-bottom:20px;letter-spacing:.02em}
+h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent);padding-bottom:2px}
+.hero-lead{font-size:clamp(14px,1.8vw,17px);color:var(--muted);line-height:1.9;margin-bottom:32px}
+.hero-lead strong{color:var(--text);font-weight:500}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:14px 28px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;box-shadow:0 4px 20px rgba(224,123,84,.3)}
+.btn-primary:hover{background:var(--accent-d);transform:translateY(-2px);box-shadow:0 6px 24px rgba(224,123,84,.4)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--text);padding:14px 24px;border-radius:12px;font-size:14px;font-weight:500;text-decoration:none;border:1.5px solid var(--border);transition:all .2s}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-l)}
+.hero-note{margin-top:16px;font-size:12px;color:var(--faint);display:flex;align-items:center;gap:6px}
+.hero-note::before{content:'🔒';font-size:11px}
+.hero-visual{position:relative}
+.chat-mockup{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.1)}
+.mock-header{background:var(--dark);padding:12px 16px;display:flex;align-items:center;gap:8px}
+.mock-dots{display:flex;gap:5px}
+.mock-dot{width:10px;height:10px;border-radius:50%}
+.mock-title{color:#F0EBE0;font-size:12px;font-weight:500;margin-left:4px}
+.mock-body{padding:16px;display:flex;flex-direction:column;gap:10px}
+.mock-msg{display:flex;gap:8px;align-items:flex-end}
+.mock-msg.u{flex-direction:row-reverse}
+.mock-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.mock-bub{max-width:75%;padding:9px 12px;border-radius:4px 14px 14px 14px;font-size:12px;line-height:1.7;color:var(--text);background:#fff;border:1px solid var(--border)}
+.mock-msg.u .mock-bub{background:var(--dark);color:#F0EBE0;border:none;border-radius:14px 4px 14px 14px}
+.mock-choices{margin-left:36px;display:flex;flex-direction:column;gap:5px}
+.mock-choice{background:#FAFAF8;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:7px 11px;font-size:11px;color:var(--muted);cursor:default;transition:opacity .3s}
+.hero-stats{display:flex;gap:24px;margin-top:28px}
+.hero-stat{text-align:center}
+.hero-stat-num{font-size:22px;font-weight:700;color:var(--accent);font-family:'Noto Serif JP',serif}
+.hero-stat-label{font-size:11px;color:var(--faint);margin-top:2px}
+
+/* ── SECTION BASE ── */
+section{padding:80px 24px}
+.container{max-width:1080px;margin:0 auto}
+.section-eyebrow{font-size:11px;font-weight:700;letter-spacing:.15em;color:var(--accent);text-transform:uppercase;margin-bottom:10px}
+.section-title{font-family:'Noto Serif JP',serif;font-size:clamp(22px,3.5vw,36px);font-weight:600;color:var(--dark);line-height:1.4;margin-bottom:16px}
+.section-lead{font-size:15px;color:var(--muted);line-height:1.9;max-width:560px}
+
+/* ── PAIN ── */
+.pain-section{background:var(--dark)}
+.pain-section .section-title{color:#F0EBE0}
+.pain-section .section-lead{color:#888}
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.pain-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px 18px}
+.pain-card:hover{background:rgba(255,255,255,.08);transition:background .2s}
+.pain-icon{font-size:24px;margin-bottom:10px}
+.pain-title{font-size:14px;font-weight:500;color:#F0EBE0;margin-bottom:6px}
+.pain-desc{font-size:12px;color:#888;line-height:1.7}
+.pain-quote{margin-top:48px;background:rgba(224,123,84,.1);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:16px 20px;font-size:14px;color:#ccc;line-height:1.8;font-style:italic}
+
+/* ── HOW ── */
+.how-section{background:var(--warm)}
+.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative}
+.how-steps::before{content:'';position:absolute;top:32px;left:10%;right:10%;height:1px;background:var(--border);z-index:0}
+.how-step{text-align:center;position:relative;z-index:1;padding:0 12px}
+.step-num{width:64px;height:64px;border-radius:50%;background:var(--surface);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.step-title{font-size:14px;font-weight:500;color:var(--dark);margin-bottom:6px}
+.step-desc{font-size:12px;color:var(--muted);line-height:1.7}
+
+/* ── PERSONAS ── */
+.persona-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.persona-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:22px 18px;transition:all .2s;cursor:default}
+.persona-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.08)}
+.pc-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.pc-icon{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.pc-name{font-size:15px;font-weight:700;color:var(--dark)}
+.pc-role{font-size:11px;color:var(--muted);margin-top:1px}
+.pc-sample{font-size:12px;color:var(--muted);line-height:1.7;border-left:2px solid var(--border);padding-left:11px;margin-top:8px;font-style:italic}
+
+/* ── SCORE ── */
+.score-section{background:var(--surface)}
+.score-section .section-title{color:var(--dark)}
+.score-section .section-lead{color:var(--muted)}
+.score-layout{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;margin-top:48px}
+.score-bands{display:flex;flex-direction:column;gap:12px}
+.score-band{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--border)}
+.sb-range{font-family:'Noto Serif JP',serif;font-size:18px;font-weight:600;min-width:44px;white-space:nowrap;flex-shrink:0}
+.sb-content{min-width:56px;flex-shrink:0}
+.sb-state{font-size:12px;font-weight:500;color:var(--dark);white-space:nowrap}
+.sb-ad{font-size:11px;color:var(--muted)}
+.sb-bar-wrap{flex:1;min-width:60px}
+.sb-bar{height:7px;border-radius:4px}
+.report-mock{background:var(--bg);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.rm-header-bar{background:var(--surface);padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.rm-icon{font-size:20px}
+.rm-title{font-size:14px;font-weight:600;color:var(--dark)}
+.rm-date{font-size:10px;color:var(--faint);margin-top:1px}
+.rm-body{padding:18px}
+.rm-score-row{display:flex;align-items:center;gap:14px;background:var(--warm);border-radius:12px;padding:13px;margin-bottom:14px}
+.rm-ring{width:52px;height:52px;border-radius:50%;border:3px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.rm-ring-num{font-size:20px;font-weight:700;color:var(--accent);line-height:1}
+.rm-ring-d{font-size:9px;color:var(--faint)}
+.rm-section{margin-bottom:12px}
+.rm-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--faint);margin-bottom:6px;text-transform:uppercase}
+.rm-dot-row{display:flex;gap:7px;align-items:flex-start;margin-bottom:5px;font-size:12px;line-height:1.6}
+.rm-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:5px}
+.rm-act{background:var(--warm);border-radius:8px;padding:7px 11px;display:flex;gap:8px;align-items:flex-start;margin-bottom:5px}
+.rm-act-n{color:var(--accent);font-size:11px;font-weight:700;flex-shrink:0}
+.rm-pro{background:#FFF8F0;border:1px solid #F0D9B0;border-radius:10px;padding:10px 12px;display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#8B6914;line-height:1.6}
+
+/* ── FEATURES ── */
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.feature-card{background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:22px 20px;transition:all .2s}
+.feature-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.06)}
+.feat-icon{font-size:28px;margin-bottom:12px}
+.feat-title{font-size:14px;font-weight:500;color:var(--dark);margin-bottom:6px}
+.feat-desc{font-size:12px;color:var(--muted);line-height:1.75}
+
+/* ── REVENUE ── */
+.revenue-section{background:var(--warm)}
+.rev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:40px}
+.rev-card{background:var(--surface);border-radius:14px;padding:22px;border:1px solid var(--border)}
+.rev-card.featured{border-color:var(--accent);box-shadow:0 0 0 2px rgba(224,123,84,.15)}
+.rev-phase{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--accent);margin-bottom:8px;text-transform:uppercase}
+.rev-title{font-size:15px;font-weight:500;color:var(--dark);margin-bottom:4px}
+.rev-price{font-size:22px;font-weight:700;color:var(--accent);margin-bottom:8px;font-family:'Noto Serif JP',serif}
+.rev-price span{font-size:13px;color:var(--muted);font-weight:400;font-family:'Noto Sans JP',sans-serif}
+.rev-items{list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:0}
+.rev-items li{font-size:12px;color:var(--muted);padding-left:16px;position:relative;line-height:1.6}
+.rev-items li::before{content:'→';position:absolute;left:0;color:var(--accent)}
+.rev-contact{margin-top:40px;text-align:center}
+.rev-contact p{font-size:13px;color:var(--muted);margin-top:10px}
+
+/* ── APP EMBED ── */
+.app-section{background:var(--bg)}
+.app-section .section-lead{margin-bottom:40px}
+.app-frame-wrap{border-radius:20px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.12);border:1px solid var(--border);background:var(--surface)}
+.app-frame-header{background:var(--dark);padding:12px 16px;display:flex;align-items:center;gap:10px}
+.app-frame-dots{display:flex;gap:5px}
+.app-frame-dot{width:11px;height:11px;border-radius:50%}
+.app-url{background:rgba(255,255,255,.08);border-radius:6px;padding:4px 12px;font-size:11px;color:#888;flex:1;text-align:center}
+iframe.app-frame{width:100%;border:none;display:block;height:680px}
+
+/* ── FAQ ── */
+.faq-list{margin-top:40px;display:flex;flex-direction:column;gap:0}
+.faq-item{border-bottom:1px solid var(--border);overflow:hidden}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 0;cursor:pointer;font-size:14px;font-weight:500;color:var(--dark);gap:16px;list-style:none}
+.faq-q::marker{display:none}
+.faq-q::-webkit-details-marker{display:none}
+.faq-icon{width:24px;height:24px;border-radius:50%;background:var(--accent-l);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:transform .2s}
+details[open] .faq-icon{transform:rotate(45deg)}
+.faq-a{font-size:13px;color:var(--muted);line-height:1.9;padding-bottom:16px}
+
+/* ── CTA SECTION ── */
+.cta-section{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-d) 100%);text-align:center;padding:96px 24px}
+.cta-section .section-title{color:#fff}
+.cta-section .section-lead{color:rgba(255,255,255,.8);margin:0 auto 36px}
+.cta-persona-chips{display:flex;justify-content:center;gap:10px;margin-bottom:36px;flex-wrap:wrap}
+.cta-chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:30px;padding:7px 16px;font-size:13px;color:#fff;display:flex;align-items:center;gap:5px}
+.btn-white{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--accent);padding:16px 40px;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;transition:all .2s;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.cta-note{margin-top:14px;font-size:12px;color:rgba(255,255,255,.6)}
+
+/* ── FOOTER ── */
+footer{background:var(--dark);padding:48px 24px 32px}
+.footer-inner{max-width:1080px;margin:0 auto}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:32px;flex-wrap:wrap;padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.08)}
+.footer-brand{max-width:280px}
+.footer-logo{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.footer-logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.footer-logo-text{color:#F0EBE0;font-weight:700;font-size:14px}
+.footer-desc{font-size:12px;color:#666;line-height:1.8}
+.footer-links{display:flex;gap:48px;flex-wrap:wrap}
+.footer-link-group h4{font-size:12px;font-weight:500;color:#888;letter-spacing:.08em;margin-bottom:12px}
+.footer-link-group a{display:block;font-size:12px;color:#666;text-decoration:none;margin-bottom:7px;transition:color .15s}
+.footer-link-group a:hover{color:#ccc}
+.footer-bottom{padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-copy{font-size:11px;color:#555}
+.footer-bottom-links{display:flex;gap:16px}
+.footer-bottom-links a{font-size:11px;color:#555;text-decoration:none}
+.footer-bottom-links a:hover{color:#aaa}
+
+/* ── STICKY CTA ── */
+.sticky-cta{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:90;animation:slideUp .4s ease .5s both}
+@keyframes slideUp{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}
+.sticky-cta a{display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:13px 28px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 6px 28px rgba(224,123,84,.45);transition:all .2s;white-space:nowrap}
+.sticky-cta a:hover{background:var(--accent-d);transform:translateY(-2px)}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav .nav-links{display:none}
+  .nav-hamburger{display:flex}
+  .mobile-menu{display:none;position:fixed;inset:0;top:56px;background:rgba(250,250,247,.97);backdrop-filter:blur(12px);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:28px}
+  .mobile-menu.open{display:flex}
+  .mobile-menu a{font-size:16px;color:var(--dark);text-decoration:none;font-weight:500}
+  .mobile-menu .nav-cta{background:var(--accent);color:#fff;padding:12px 32px;border-radius:10px}
+  .hero-inner{grid-template-columns:1fr;gap:40px}
+  .hero-visual{order:-1}
+  .hero{padding:72px 20px 48px;min-height:auto}
+  .pain-grid{grid-template-columns:1fr 1fr}
+  .how-steps{grid-template-columns:1fr 1fr;row-gap:32px}
+  .how-steps::before{display:none}
+  .persona-grid{grid-template-columns:1fr 1fr}
+  .score-layout{grid-template-columns:1fr}
+  .feature-grid{grid-template-columns:1fr}
+  .rev-grid{grid-template-columns:1fr}
+  section{padding:56px 20px}
+  iframe.app-frame{height:80vh;min-height:500px}
+  .hero-stats{gap:16px}
+  .hero-stat-num{font-size:18px}
+  .sticky-cta{display:none}
+  .footer-top{flex-direction:column}
+  .footer-links{gap:32px}
+  .cta-persona-chips{gap:7px}
+}
+@media(max-width:480px){
+  .pain-grid{grid-template-columns:1fr}
+  .persona-grid{grid-template-columns:1fr}
+  iframe.app-frame{height:85vh;min-height:480px}
+}
+
+/* ── CONTACT FORM ── */
+.cf-input{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:14px;font-family:inherit;color:var(--dark);background:var(--bg);outline:none;transition:border-color .15s;-webkit-appearance:none}
+.cf-input:focus{border-color:var(--accent);background:#fff}
+.cf-select{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:14px;font-family:inherit;color:var(--dark);background:var(--bg);outline:none;cursor:pointer;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23ABA59D' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:36px;transition:border-color .15s}
+.cf-select:focus{border-color:var(--accent);background-color:#fff}
+.cf-textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:14px;font-family:inherit;color:var(--dark);background:var(--bg);outline:none;resize:vertical;min-height:120px;line-height:1.7;transition:border-color .15s}
+.cf-textarea:focus{border-color:var(--accent);background:#fff}
+.cf-submit{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:8px}
+.cf-submit:hover{background:var(--accent-d);transform:translateY(-1px)}
+.cf-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.cf-note{font-size:11px;color:var(--faint);margin-top:10px;text-align:center;line-height:1.7}
+.cf-success{display:none;background:#E8F8F0;border:1px solid #A8D8C0;border-radius:12px;padding:20px;text-align:center;margin-top:16px}
+.cf-success-icon{font-size:32px;margin-bottom:8px}
+.cf-success-title{font-size:15px;font-weight:700;color:#1D7A5A;margin-bottom:4px}
+.cf-success-msg{font-size:13px;color:#2D6B4A}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">💼</div>
+    <span class="nav-logo-text">ムリです</span>
+  </a>
+  <div class="nav-links">
+    <a href="#how">使い方</a>
+    <a href="#personas">話し相手</a>
+    <a href="#score">レポート</a>
+    <a href="#faq">よくある質問</a>
+    <a href="contact.html">掲載案内</a>
+    <a href="#app" class="nav-cta">今すぐ相談する</a>
+  </div>
+  <div class="nav-hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#how" onclick="toggleMenu()">使い方</a>
+  <a href="#personas" onclick="toggleMenu()">話し相手</a>
+  <a href="#score" onclick="toggleMenu()">レポート</a>
+  <a href="#faq" onclick="toggleMenu()">よくある質問</a>
+  <a href="contact.html" onclick="toggleMenu()">掲載案内</a>
+  <a href="#app" class="nav-cta" onclick="toggleMenu()">今すぐ相談する</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-inner container">
+    <div>
+      <div class="hero-badge reveal">AI × メンタルケア</div>
+      <h1 class="reveal">その「辞め時かな」、<br><em>一人で抱え込まないで。</em></h1>
+      <p class="hero-lead reveal">
+        「辞め時かな」と思い始めたとき、誰かに話せましたか？<br>
+        <strong>上司が無理・板挟み・条件が違う</strong>、そのリアルな気持ちを<strong>5つの話し相手AI</strong>が一緒に整理します。
+      </p>
+      <div class="hero-btns reveal">
+        <a href="#app" class="btn-primary">💬 今すぐ相談してみる</a>
+        <a href="#how" class="btn-secondary">使い方を見る →</a>
+      </div>
+      <p class="hero-note reveal">無料 ・ 登録不要 ・ 匿名で使えます</p>
+      <div class="hero-stats reveal">
+        <div class="hero-stat"><div class="hero-stat-num">5種</div><div class="hero-stat-label">話し相手</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">無料</div><div class="hero-stat-label">完全無料</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">匿名</div><div class="hero-stat-label">登録不要</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">24h</div><div class="hero-stat-label">いつでも</div></div>
+      </div>
+    </div>
+    <div class="hero-visual reveal">
+      <div class="chat-mockup">
+        <div class="mock-header">
+          <div class="mock-dots">
+            <div class="mock-dot" style="background:#FF5F57"></div>
+            <div class="mock-dot" style="background:#FEBC2E"></div>
+            <div class="mock-dot" style="background:#28C840"></div>
+          </div>
+          <span class="mock-title">ムリです</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-msg">
+            <div class="mock-av" style="background:#FFE4F5">💅</div>
+            <div class="mock-bub">え〜なになに！？話して話して！！🔥</div>
+          </div>
+          <div class="mock-choices" id="mock-choices">
+            <div class="mock-choice">上司が生理的に無理で毎日つらい</div>
+            <div class="mock-choice">板挟みになって疲弊しきっている</div>
+            <div class="mock-choice">辞めるか続けるか迷っている</div>
+          </div>
+          <div class="mock-msg u" id="mock-user-msg" style="display:none">
+            <div class="mock-bub">上司のことで毎日しんどい…</div>
+          </div>
+          <div class="mock-msg" id="mock-reply" style="display:none">
+            <div class="mock-av" style="background:#FFE4F5">💅</div>
+            <div class="mock-bub">は？それ完全にアウトじゃん💢<br>どんな感じで？</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section class="pain-section" id="pain">
+  <div class="container">
+    <div class="section-eyebrow reveal" style="color:#C4A882">こんな悩み、ありませんか</div>
+    <h2 class="section-title reveal">「辞め時かな」と感じる悩みは<br>誰にも言えないことが多い</h2>
+    <p class="section-lead reveal" style="color:#888">友人に話すのは気が引ける。転職エージェントは「次を決める」ことしか興味がない。カウンセラーは高くて敷居が高い。</p>
+    <div class="pain-grid">
+      <div class="pain-card reveal">
+        <div class="pain-icon">😤</div>
+        <div class="pain-title">上司・先輩との関係</div>
+        <div class="pain-desc">生理的に無理、パワハラ的な言動、人前での怒鳴り。毎朝会社に行くのがつらい。</div>
+      </div>
+      <div class="pain-card reveal">
+        <div class="pain-icon">😵‍💫</div>
+        <div class="pain-title">板挟み・派閥問題</div>
+        <div class="pain-desc">上と下の間で挟まれて消耗。派閥に巻き込まれて中立でいられない。</div>
+      </div>
+      <div class="pain-card reveal">
+        <div class="pain-icon">🥵</div>
+        <div class="pain-title">休日出勤・サービス残業</div>
+        <div class="pain-desc">聞いていた条件と全然違う。休みが取れない、残業代が出ない。</div>
+      </div>
+      <div class="pain-card reveal">
+        <div class="pain-icon">🤝</div>
+        <div class="pain-title">同期・後輩との関係</div>
+        <div class="pain-desc">馬が合わない、無視される、足を引っ張られる。職場の人間関係がドロドロ。</div>
+      </div>
+      <div class="pain-card reveal">
+        <div class="pain-icon">🤔</div>
+        <div class="pain-title">辞めるか続けるか迷う</div>
+        <div class="pain-desc">辞めたいけど踏み切れない。続けたほうがいいのか判断できない。</div>
+      </div>
+      <div class="pain-card reveal">
+        <div class="pain-icon">😶‍🌫️</div>
+        <div class="pain-title">転職後のギャップ</div>
+        <div class="pain-desc">入社してみたら聞いていた話と全然違った。でも短期離職のリスクが怖い。</div>
+      </div>
+    </div>
+    <div class="pain-quote reveal">
+      「転職経験者の8割以上が、転職先の実態と事前情報にギャップを感じたと回答している」<br>
+      <span style="font-size:11px;opacity:.6">エン・ジャパン調査より</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="how-section" id="how">
+  <div class="container">
+    <div class="section-eyebrow reveal">使い方</div>
+    <h2 class="section-title reveal">4ステップで<br>気持ちが整理される</h2>
+    <p class="section-lead reveal">登録不要、匿名、完全無料。スマホでもPCでも、今すぐ始められます。</p>
+    <div class="how-steps">
+      <div class="how-step reveal">
+        <div class="step-num">🤝</div>
+        <div class="step-title">話し相手を選ぶ</div>
+        <div class="step-desc">お母さん・友達・ギャルなど5種類から、今の気分に合った話し相手を選択</div>
+      </div>
+      <div class="how-step reveal">
+        <div class="step-num">💬</div>
+        <div class="step-title">選択肢で話す</div>
+        <div class="step-desc">選択肢から選ぶか自由記述。「その他」を選ぶとテキスト入力欄が展開する</div>
+      </div>
+      <div class="how-step reveal">
+        <div class="step-num">📋</div>
+        <div class="step-title">レポートを受け取る</div>
+        <div class="step-desc">気持ちスコア・状況整理・次にできること3つを人格の口調でまとめてくれる</div>
+      </div>
+      <div class="how-step reveal">
+        <div class="step-num">🚀</div>
+        <div class="step-title">次の一歩を決める</div>
+        <div class="step-desc">続けて話すか、専門家・転職エージェントに相談するかを選べる</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAS -->
+<section id="personas" style="background:var(--bg)">
+  <div class="container">
+    <div class="section-eyebrow reveal">話し相手</div>
+    <h2 class="section-title reveal">今の気分で<br>話し相手を選べる</h2>
+    <p class="section-lead reveal">同じ悩みでも、話す相手によって気持ちの整理のされ方は変わる。5種類の個性豊かなAIが待っています。</p>
+    <div class="persona-grid">
+      <div class="persona-card reveal">
+        <div class="pc-top">
+          <div class="pc-icon" style="background:#FFE4E1">👩</div>
+          <div><div class="pc-name">お母さん</div><div class="pc-role">温かく受け止めてくれる</div></div>
+        </div>
+        <div class="pc-sample">「そうかそうか、それは大変だったね 💕 もう少し詳しく話してみて？」</div>
+      </div>
+      <div class="persona-card reveal">
+        <div class="pc-top">
+          <div class="pc-icon" style="background:#FFF5CC">😊</div>
+          <div><div class="pc-name">友達</div><div class="pc-role">一緒に怒ったり笑ったり</div></div>
+        </div>
+        <div class="pc-sample">「えー！マジで！？それはヤバいじゃん😤 いつからなの？」</div>
+      </div>
+      <div class="persona-card reveal">
+        <div class="pc-top">
+          <div class="pc-icon" style="background:#F0F0FF">🧑‍⚕️</div>
+          <div><div class="pc-name">カウンセラー</div><div class="pc-role">丁寧な敬語で整理してくれる</div></div>
+        </div>
+        <div class="pc-sample">「それは大変な状況でしたね。具体的にどのような場面でそう感じましたか？」</div>
+      </div>
+      <div class="persona-card reveal">
+        <div class="pc-top">
+          <div class="pc-icon" style="background:#FFE4F5">💅</div>
+          <div><div class="pc-name">ギャル</div><div class="pc-role">全力で味方になってくれる</div></div>
+        </div>
+        <div class="pc-sample">「は？それ完全にアウトじゃん🔥 そんな上司マジ無理すぎ！」</div>
+      </div>
+      <div class="persona-card reveal">
+        <div class="pc-top">
+          <div class="pc-icon" style="background:#FFF8E8">🐕</div>
+          <div><div class="pc-name">イヌ</div><div class="pc-role">全力でご主人様を心配してくれる</div></div>
+        </div>
+        <div class="pc-sample">「ワン！それは許せないワン！！💢 ご主人様を傷つけるやつは敵だワン！🐕」</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" style="background:var(--surface)">
+  <div class="container">
+    <div class="section-eyebrow reveal" >機能</div>
+    <h2 class="section-title reveal">ただ「聞く」だけじゃない</h2>
+    <p class="section-lead reveal">感情整理から具体的なアクションまで、会話を通じて自然にサポートします。</p>
+    <div class="feature-grid">
+      <div class="feature-card reveal">
+        <div class="feat-icon">💬</div>
+        <div class="feat-title">選択肢＋自由記述の会話設計</div>
+        <div class="feat-desc">毎回の返答に選択肢が表示されるから、何を話せばいいか迷わない。「その他」を選べばテキストで自由に入力もできる。</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feat-icon">📊</div>
+        <div class="feat-title">気持ちスコアの可視化</div>
+        <div class="feat-desc">会話終了後に10点満点の気持ちスコアが算出される。スコアの根拠も話し相手の視点で説明してくれるから腑に落ちる。</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feat-icon">🚀</div>
+        <div class="feat-title">人格ごとのアドバイス</div>
+        <div class="feat-desc">「次にできること」がお母さんなら提案型、ギャルならズバッとした口調で出力される。読みやすく、実行しやすい。</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feat-icon">📋</div>
+        <div class="feat-title">整理レポートの出力</div>
+        <div class="feat-desc">状況の整理・感情の核心・次のアクション3つを自動生成。スクリーンショットで保存もできる。</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feat-icon">🔒</div>
+        <div class="feat-title">匿名・登録不要</div>
+        <div class="feat-desc">アカウント作成不要、メールアドレスも不要。職場名・名前など個人を特定する情報を入力する必要がない。</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feat-icon">📱</div>
+        <div class="feat-title">スマホ・PC完全対応</div>
+        <div class="feat-desc">通勤中のスマホでも、自宅のPCでも快適に使える。ランチタイムや帰宅後など、ちょっとした時間に話せる。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCORE / REPORT -->
+<section class="score-section" id="score">
+  <div class="container">
+    <div class="section-eyebrow reveal">レポート</div>
+    <h2 class="section-title reveal">スコアで「今の状態」が<br>一目でわかる</h2>
+    <p class="section-lead reveal">スコアは話し相手の視点で採点され、スコアに応じて表示されるアドバイスや紹介サービスが変わります。</p>
+    <div class="score-layout">
+      <div class="score-bands">
+        <div class="score-band reveal">
+          <div class="sb-range" style="color:#8C3A2A">1〜3</div>
+          <div class="sb-content">
+            <div class="sb-state">限界・危機</div>
+          </div>
+          <div class="sb-bar-wrap"><div class="sb-bar" style="background:#8C3A2A;width:100%"></div></div>
+          <div style="font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;white-space:nowrap">退職代行・心療内科・弁護士</div>
+        </div>
+        <div class="score-band reveal">
+          <div class="sb-range" style="color:#C8613A">4〜5</div>
+          <div class="sb-content">
+            <div class="sb-state">深刻</div>
+          </div>
+          <div class="sb-bar-wrap"><div class="sb-bar" style="background:#C8613A;width:68%"></div></div>
+          <div style="font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;white-space:nowrap">カウンセラー・EAP</div>
+        </div>
+        <div class="score-band reveal">
+          <div class="sb-range" style="color:#B0983A">6〜7</div>
+          <div class="sb-content">
+            <div class="sb-state">転職検討</div>
+          </div>
+          <div class="sb-bar-wrap"><div class="sb-bar" style="background:#B0983A;width:40%"></div></div>
+          <div style="font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;white-space:nowrap">転職エージェント</div>
+        </div>
+        <div class="score-band reveal">
+          <div class="sb-range" style="color:#2E7D6F">8〜10</div>
+          <div class="sb-content">
+            <div class="sb-state">軽度〜良好</div>
+          </div>
+          <div class="sb-bar-wrap"><div class="sb-bar" style="background:#2E7D6F;width:20%"></div></div>
+          <div style="font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;white-space:nowrap">セルフケア・書籍</div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:16px;line-height:1.8">話し相手によって採点視点が変わります。ギャルなら「マジ無理🥺」、カウンセラーなら「就労継続が困難なレベル」——スコアの根拠もレポートに明示されます。</p>
+      </div>
+      <div class="report-mock reveal">
+        <div class="rm-header-bar">
+          <div class="rm-icon">💅</div>
+          <div>
+            <div class="rm-title">ストレス整理レポート</div>
+            <div class="rm-date">2025年4月3日 ・ ギャルとの会話</div>
+          </div>
+        </div>
+        <div class="rm-body">
+          <div class="rm-score-row">
+            <div class="rm-ring">
+              <span class="rm-ring-num">3</span>
+              <span class="rm-ring-d">/ 10</span>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--faint);margin-bottom:3px">今の気持ちスコア</div>
+              <div style="font-size:12px;line-height:1.6">毎日のパワハラで限界が近づいている</div>
+            </div>
+          </div>
+          <div class="rm-section">
+            <div class="rm-label">📋 状況の整理</div>
+            <div style="font-size:12px;color:var(--text);line-height:1.7">上司から毎日人前で怒鳴られ、人格否定の言葉を浴びせられている。これ以上続けると本当に壊れそうな状態。</div>
+          </div>
+          <div class="rm-section">
+            <div class="rm-label">💬 感じているつらさ</div>
+            <div class="rm-dot-row"><div class="rm-dot"></div><span style="font-size:12px">毎日のように人前で怒鳴られる</span></div>
+            <div class="rm-dot-row"><div class="rm-dot"></div><span style="font-size:12px">人格否定される言葉を浴びせられる</span></div>
+            <div class="rm-dot-row"><div class="rm-dot"></div><span style="font-size:12px">上司が生理的に無理なレベルになった</span></div>
+          </div>
+          <div class="rm-section">
+            <div class="rm-label">🚀 次にできること</div>
+            <div class="rm-act"><span class="rm-act-n">01</span><span style="font-size:12px">日時・内容をメモして記録始めてみたら？📝</span></div>
+            <div class="rm-act"><span class="rm-act-n">02</span><span style="font-size:12px">人事部か産業医に相談して味方作ろ💡</span></div>
+            <div class="rm-act"><span class="rm-act-n">03</span><span style="font-size:12px">本気でヤバいなら労基署って選択肢もあるよ</span></div>
+          </div>
+          <div class="rm-pro">
+            <span style="font-size:14px;flex-shrink:0">💛</span>
+            <span>専門家との面談もおすすめ。一人で抱えてるの本当に大変だよ。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- APP EMBED -->
+<section class="app-section" id="app">
+  <div class="container">
+    <div class="section-eyebrow reveal">無料で今すぐ使える</div>
+    <h2 class="section-title reveal">「辞め時かな」と思ったら、<br>今すぐ話してみよう</h2>
+    <p class="section-lead reveal">登録不要・匿名・無料。スマホでもPCでもそのまま使えます。</p>
+    <div class="app-frame-wrap reveal">
+      <div class="app-frame-header">
+        <div class="app-frame-dots">
+          <div class="app-frame-dot" style="background:#FF5F57"></div>
+          <div class="app-frame-dot" style="background:#FEBC2E"></div>
+          <div class="app-frame-dot" style="background:#28C840"></div>
+        </div>
+        <div class="app-url">ムリです</div>
+      </div>
+      <iframe
+        class="app-frame"
+        src="kimochi-seiri.html"
+        title="ムリです チャットアプリ"
+        loading="lazy"
+        allow="clipboard-write"
+        tabindex="-1"
+      ></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section style="background:var(--warm)" id="faq">
+  <div class="container">
+    <div class="section-eyebrow reveal">よくある質問</div>
+    <h2 class="section-title reveal">Q&amp;A</h2>
+    <div class="faq-list">
+      <details class="faq-item reveal">
+        <summary class="faq-q">個人情報は保存されますか？<div class="faq-icon">+</div></summary>
+        <p class="faq-a">会話内容はAI（Claude）のAPIに送信されますが、このサービス独自のサーバーに保存されることはありません。名前・会社名などの個人情報を入力する必要もありません。満足度評価のみ、ブラウザのlocalStorageにのみ保存されます。</p>
+      </details>
+      <details class="faq-item reveal">
+        <summary class="faq-q">医療行為・法律相談になりますか？<div class="faq-icon">+</div></summary>
+        <p class="faq-a">このサービスは感情整理・情報整理のサポートツールです。医療診断・法律相談・精神科的な治療行為は行いません。深刻なお悩みや心身の不調がある場合は、医療機関や専門家にご相談ください。</p>
+      </details>
+      <details class="faq-item reveal">
+        <summary class="faq-q">本当に無料ですか？<div class="faq-icon">+</div></summary>
+        <p class="faq-a">はい、完全無料です。登録・クレジットカードの入力も不要です。</p>
+      </details>
+      <details class="faq-item reveal">
+        <summary class="faq-q">会話の途中で話し相手を変えられますか？<div class="faq-icon">+</div></summary>
+        <p class="faq-a">はい。画面上部の人格ボタンをいつでも切り替えられます。ただし、切り替えると会話はリセットされます。同じ悩みを別の人格に話してみると、違う視点のアドバイスが得られることもあります。</p>
+      </details>
+      <details class="faq-item reveal">
+        <summary class="faq-q">AIのアドバイスは信頼できますか？<div class="faq-icon">+</div></summary>
+        <p class="faq-a">AIは会話の整理・選択肢の提示・感情の言語化を手伝いますが、最終的な判断はご自身で行ってください。深刻な状況（パワハラ・ハラスメント・メンタルヘルスの危機等）の場合は、必ず専門機関にご相談ください。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+
+<!-- REVENUE -->
+<section class="revenue-section" id="about">
+  <div class="container">
+    <div class="section-eyebrow reveal">企業様向け掲載のご案内</div>
+    <h2 class="section-title reveal">「職場を辞めたい人」に<br>最適なタイミングで届ける</h2>
+    <p class="section-lead reveal">スコアに連動した広告配信で、温度感の高いユーザーにピンポイントにリーチできます。</p>
+    <div class="rev-grid">
+      <div class="rev-card featured reveal">
+        <div class="rev-phase">おすすめ</div>
+        <div class="rev-title">月額掲載料プラン</div>
+        <div class="rev-price">¥30,000〜<span>/月・社</span></div>
+        <ul class="rev-items">
+          <li>スコア帯ごとの固定枠掲載</li>
+          <li>スコア1〜3の「限界帯」は希少性高く高単価設定可</li>
+          <li>退職代行・弁護士・心療内科に最適</li>
+          <li>初月トライアル（¥10,000〜）あり</li>
+        </ul>
+      </div>
+      <div class="rev-card reveal">
+        <div class="rev-phase">Phase 2 / 予定</div>
+        <div class="rev-title">成果報酬・B2B展開</div>
+        <div class="rev-price">¥50,000〜<span>/転職決定</span></div>
+        <ul class="rev-items">
+          <li>転職エージェント向け成果報酬プラン</li>
+          <li>企業向け：入社後オンボーディングツールとしてのBtoBライセンス</li>
+          <li>HR会社・転職エージェントへのAPI提供</li>
+        </ul>
+      </div>
+    </div>
+    <div class="rev-contact reveal">
+      <p>初月トライアル（¥10,000〜）からお試しいただけます。まずはお気軽にご連絡ください。</p>
+      <a href="contact.html" class="btn-primary" style="display:inline-flex;margin-top:20px">📩 掲載について問い合わせる</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="container">
+    <h2 class="section-title reveal">「辞め時かな」と思ったら、まず話してみよう。</h2>
+    <p class="section-lead reveal">一人で抱え込まなくていい。まず話すことから始めよう。</p>
+    <div class="cta-persona-chips reveal">
+      <div class="cta-chip">👩 お母さん</div>
+      <div class="cta-chip">😊 友達</div>
+      <div class="cta-chip">🧑‍⚕️ カウンセラー</div>
+      <div class="cta-chip">💅 ギャル</div>
+      <div class="cta-chip">🐕 イヌ</div>
+    </div>
+    <a href="#app" class="btn-white reveal">💬 今すぐ無料で相談する</a>
+    <div class="cta-note reveal">登録不要 ・ 完全無料 ・ スマホ対応</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="footer-logo-icon">💼</div>
+          <span class="footer-logo-text">ムリです</span>
+        </div>
+        <p class="footer-desc">「辞め時」がわからないあなたへ。職場のドロドロした悩みを、話し相手AIと一緒に整理するサービスです。無料・登録不要・匿名。</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-link-group">
+          <h4>コンテンツ</h4>
+          <a href="#how">使い方</a>
+          <a href="#personas">話し相手の種類</a>
+          <a href="#features">機能一覧</a>
+          <a href="#faq">よくある質問</a>
+        </div>
+        <div class="footer-link-group">
+          <h4>サービス</h4>
+          <a href="#app">今すぐ相談する</a>
+          <a href="#about">掲載のご案内</a>
+        </div>
+        <div class="footer-link-group">
+          <h4>相談窓口（厚生労働省）</h4>
+          <a href="https://www.mhlw.go.jp/general/seido/chihou/kaiketu/soudan.html" target="_blank" rel="noopener">労働相談窓口</a>
+          <a href="https://www.mhlw.go.jp/bunya/shougaihoken/health_link/index.html" target="_blank" rel="noopener">こころの健康・メンタルヘルス　治療や生活を応援するサイト</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 ムリです. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">プライバシーポリシー</a>
+        <a href="#">免責事項</a>
+        <a href="#about">お問い合わせ</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="sticky-cta" id="sticky-cta">
+  <a href="#app">💬 今すぐ無料で相談する</a>
+</div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function toggleMenu(){
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+// Sticky CTAはアプリセクションが見えたら非表示
+const appSection = document.getElementById('app');
+const stickyCta = document.getElementById('sticky-cta');
+const stickyObs = new IntersectionObserver(entries=>{
+  stickyCta.style.display = entries[0].isIntersecting ? 'none' : 'block';
+},{threshold:0.1});
+stickyObs.observe(appSection);
+
+// Scroll reveal
+const revealObs = new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('in'), (i%4)*80);
+      revealObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.1,rootMargin:'0px 0px -32px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+
+// Chat mock animation
+(function(){
+  const choices = document.querySelectorAll('.mock-choice');
+  const userMsg = document.getElementById('mock-user-msg');
+  const reply   = document.getElementById('mock-reply');
+  let step = 0;
+
+  function next(){
+    if(step < choices.length){
+      choices[step].style.opacity='1'; choices[step].style.transform='translateY(0)';
+      step++; setTimeout(next,500);
+    } else {
+      setTimeout(()=>{
+        userMsg.style.display='flex';
+        setTimeout(()=>{ reply.style.display='flex'; },700);
+        setTimeout(()=>{
+          userMsg.style.display='none'; reply.style.display='none';
+          choices.forEach(c=>{c.style.opacity='0';c.style.transform='translateY(8px)';});
+          step=0; setTimeout(next,800);
+        },4000);
+      },600);
+    }
+  }
+  choices.forEach(c=>{c.style.opacity='0';c.style.transform='translateY(8px)';c.style.transition='all .35s ease';});
+  setTimeout(next,1500);
+})();
+
+// スムーズスクロール
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const id=a.getAttribute('href').slice(1);
+    const el=document.getElementById(id);
+    if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
+
+// お問い合わせフォーム送信（Netlify Forms）
+</script>
+</body>
+</html>

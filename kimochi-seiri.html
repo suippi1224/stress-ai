@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ムリです</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2EE;--surface:#fff;--dark:#1E1C1A;--text:#2E2C29;
+  --muted:#7A756E;--faint:#B5B0A8;--border:#E4E0D8;
+  --accent:#E07B54;--accent-l:#FDF0EB;
+  --warn-bg:#FFF8F0;--warn-bd:#F0D9B0;--warn-tx:#8B6914;
+  --green:#1D7A5A;--amber:#9A6B10;--red:#8C3A2A;
+  --star:#F5A623;
+}
+html,body{height:100%;background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+#app{height:100vh;max-width:680px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg)}
+
+/* Header */
+header{background:var(--dark);padding:11px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.h-left{display:flex;align-items:center;gap:9px}
+.h-title{color:#F0EBE0;font-size:14px;font-weight:500;letter-spacing:.04em}
+.h-sub{color:#666;font-size:10px;margin-top:1px}
+.h-btns{display:flex;gap:7px;align-items:center}
+#fb-btn{background:transparent;border:1px solid #555;border-radius:6px;padding:4px 10px;color:#aaa;font-size:10px;cursor:pointer;font-family:inherit;transition:all .15s}
+#fb-btn:hover{border-color:#aaa;color:#ddd}
+#reset-btn{background:transparent;border:1px solid #444;border-radius:6px;padding:4px 10px;color:#777;font-size:10px;cursor:pointer;font-family:inherit;transition:all .15s}
+#reset-btn:hover{border-color:#777;color:#bbb}
+
+/* Persona bar */
+#persona-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:9px 14px 7px;flex-shrink:0}
+.p-label{font-size:10px;color:var(--faint);margin-bottom:6px;letter-spacing:.06em}
+.p-list{display:flex;gap:6px;flex-wrap:wrap}
+.p-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 9px;border-radius:12px;cursor:pointer;border:1.5px solid var(--border);background:#FAFAF8;font-family:inherit;transition:all .15s;min-width:52px}
+.p-btn .pi{font-size:19px;line-height:1}
+.p-btn .pn{font-size:10px;color:var(--muted);font-weight:500;white-space:nowrap}
+.p-btn.active{border-color:var(--accent);background:var(--accent-l)}
+.p-btn.active .pn{color:var(--accent)}
+.p-btn:hover:not(.active){border-color:#ccc;background:#F7F5F2}
+
+/* Chat */
+#chat{flex:1;overflow-y:auto;padding:16px 12px 6px;scroll-behavior:smooth}
+
+/* Messages */
+.msg{display:flex;gap:8px;margin-bottom:12px;animation:fadeUp .2s ease}
+.msg.user{flex-direction:row-reverse}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.bub{max-width:80%;padding:10px 13px;font-size:14px;line-height:1.75;white-space:pre-wrap}
+.bub.ai{background:var(--surface);border:1px solid var(--border);border-radius:4px 15px 15px 15px;color:var(--text)}
+.bub.user{background:var(--dark);border-radius:15px 4px 15px 15px;color:#F0EBE0;font-size:13.5px}
+
+/* Typing */
+#typing{display:none;gap:8px;margin-bottom:12px;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:bounce 1.2s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+.t-bub{background:var(--surface);border:1px solid var(--border);border-radius:4px 15px 15px 15px;padding:10px 13px;display:flex;gap:5px;align-items:center}
+
+/* Choices panel */
+#choices-panel{background:var(--surface);border-top:1px solid var(--border);padding:10px 13px 6px;display:none;flex-shrink:0;animation:fadeUp .18s ease}
+.ch-hint{font-size:10px;color:var(--faint);margin-bottom:7px;letter-spacing:.05em}
+.ch-grid{display:flex;flex-direction:column;gap:5px}
+.c-btn{display:flex;align-items:center;gap:9px;background:#FAFAF8;border:1px solid var(--border);border-radius:10px;padding:9px 13px;font-size:13px;color:var(--text);cursor:pointer;font-family:inherit;text-align:left;line-height:1.4;transition:all .15s}
+.c-btn:hover{background:var(--accent-l);border-color:var(--accent)}
+.c-icon{font-size:14px;flex-shrink:0}
+.c-btn.other{color:var(--muted);border-style:dashed}
+#other-exp{display:none;margin-top:6px;animation:fadeUp .13s ease}
+.oth-inner{display:flex;gap:6px;align-items:flex-end;background:#F4F2EE;border-radius:10px;padding:9px 11px;border:1px solid var(--border)}
+#other-inp{flex:1;border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:13px;font-family:inherit;color:var(--text);background:var(--surface);resize:none;outline:none;line-height:1.55;transition:border-color .15s}
+#other-inp:focus{border-color:var(--accent)}
+#oth-send{width:34px;height:34px;border-radius:8px;border:none;background:var(--accent);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+
+/* Input */
+#input-area{background:var(--surface);border-top:1px solid var(--border);padding:9px 13px;flex-shrink:0}
+.inp-row{display:flex;gap:7px;align-items:flex-end}
+#msg-inp{flex:1;border:1px solid var(--border);border-radius:12px;padding:9px 12px;font-size:13.5px;font-family:inherit;color:var(--text);background:#FAF9F6;resize:none;outline:none;line-height:1.6;transition:border-color .15s}
+#msg-inp:focus{border-color:var(--accent)}
+#send-btn{width:38px;height:38px;border-radius:10px;border:none;background:var(--dark);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+#send-btn:disabled{background:#DDD;cursor:default}
+.disc{font-size:10px;color:var(--faint);text-align:center;margin-top:6px;line-height:1.5}
+
+/* Report */
+.report{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:18px;margin-top:5px;animation:fadeUp .35s ease}
+.rh{display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid #F0EBE0;margin-bottom:14px}
+.rt{font-size:14px;font-weight:500;color:var(--dark)}
+.rd{font-size:10px;color:var(--faint);margin-top:2px}
+.sw{background:#FAF7F2;border-radius:12px;padding:13px;margin-bottom:12px}
+.sw-top{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.sr{width:52px;height:52px;border-radius:50%;border-width:3px;border-style:solid;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.sn{font-size:20px;font-weight:700;line-height:1}
+.sd{font-size:9px;color:var(--faint)}
+.score-def{font-size:11px;color:var(--muted);line-height:1.7;padding:8px 10px;background:#fff;border-radius:8px;border:1px solid var(--border)}
+.rs{margin-bottom:12px}
+.rl{font-size:10px;font-weight:500;color:var(--faint);letter-spacing:.08em;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.rv{font-size:13px;color:var(--text);line-height:1.8}
+.pi-row{display:flex;gap:7px;align-items:flex-start;margin-bottom:5px}
+.pi-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:7px}
+.ai-row{background:#F5F3EF;border-radius:8px;padding:7px 11px;display:flex;gap:8px;align-items:flex-start;margin-bottom:5px}
+.ai-n{color:var(--accent);font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+.pro{margin-top:10px;background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:11px;padding:11px 13px;display:flex;gap:8px;align-items:flex-start}
+.rf{margin-top:14px;padding-top:11px;border-top:1px solid #F0EBE0;font-size:10px;color:var(--faint);text-align:center}
+
+/* Post-report choices */
+.post-report-choices{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:14px;margin-top:10px;animation:fadeUp .25s ease}
+.prc-title{font-size:12px;color:var(--muted);margin-bottom:9px;font-weight:500}
+.prc-grid{display:flex;flex-direction:column;gap:6px}
+.prc-btn{display:flex;align-items:center;gap:8px;background:#FAFAF8;border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--text);cursor:pointer;font-family:inherit;text-align:left;line-height:1.4;transition:all .15s}
+.prc-btn:hover{background:var(--accent-l);border-color:var(--accent)}
+
+/* Satisfaction */
+.sat-card{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:18px;margin-top:8px;animation:fadeUp .3s ease}
+.sat-title{font-size:14px;font-weight:500;color:var(--dark);margin-bottom:4px}
+.sat-sub{font-size:11px;color:var(--muted);margin-bottom:14px}
+.stars{display:flex;gap:8px;margin-bottom:14px}
+.star{font-size:28px;cursor:pointer;transition:transform .1s;line-height:1;filter:grayscale(1);opacity:.5}
+.star.on{filter:none;opacity:1;transform:scale(1.15)}
+.sat-section{margin-bottom:12px}
+.sat-label{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:7px}
+.tag-grid{display:flex;flex-wrap:wrap;gap:6px}
+.tag{padding:5px 12px;border-radius:20px;border:1px solid var(--border);font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit;background:#FAFAF8;transition:all .15s}
+.tag.good.on{background:#E8F8F0;border-color:#1D7A5A;color:#1D7A5A}
+.tag.bad.on{background:#FEF0ED;border-color:var(--accent);color:var(--accent)}
+.sat-comment{width:100%;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;color:var(--text);background:#FAF9F6;resize:none;outline:none;line-height:1.6;transition:border-color .15s}
+.sat-comment:focus{border-color:var(--accent)}
+.sat-submit{display:block;width:100%;margin-top:12px;background:var(--dark);border:none;border-radius:11px;padding:11px;color:#F0C98A;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.sat-submit:hover{opacity:.85}
+.sat-done{text-align:center;padding:16px 0;font-size:14px;color:var(--green);font-weight:500}
+
+/* Feedback dashboard */
+#fb-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px}
+#fb-modal.open{display:flex}
+.fb-card{background:var(--surface);border-radius:16px;padding:22px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.fb-card h2{font-size:15px;font-weight:500;margin-bottom:4px}
+.fb-card .fb-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
+.fb-close{float:right;background:transparent;border:none;font-size:18px;cursor:pointer;color:var(--faint)}
+.fb-stat{background:#FAF9F6;border-radius:10px;padding:12px;margin-bottom:10px}
+.fb-stat-title{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500}
+.fb-avg{font-size:24px;font-weight:700;color:var(--dark)}
+.fb-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.fb-tag{font-size:11px;padding:3px 10px;border-radius:20px;background:#F0EBE0;color:var(--muted)}
+.fb-comment-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.fb-comment-item{font-size:12px;color:var(--text);background:#FAF9F6;border-radius:8px;padding:8px 11px;line-height:1.6}
+.fb-ai-summary{background:linear-gradient(135deg,#f0f0ff,#fff8f0);border:1px solid #d0c8e0;border-radius:10px;padding:14px;margin-top:10px}
+.fb-ai-title{font-size:11px;font-weight:500;color:#5A5AB5;margin-bottom:6px}
+.fb-ai-text{font-size:12px;color:var(--text);line-height:1.8}
+.fb-gen-btn{margin-top:10px;background:var(--dark);border:none;border-radius:9px;padding:8px 18px;color:#F0C98A;font-size:12px;cursor:pointer;font-family:inherit}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* Ad block */
+.ad-block{margin-top:14px;padding-top:14px;border-top:1px solid #F0EBE0}
+.ad-block{margin-top:10px}
+.ad-label{font-size:10px;color:var(--faint);letter-spacing:.07em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ad-card{display:block;text-decoration:none;padding:11px 13px;border-radius:10px;margin-bottom:7px;cursor:pointer;transition:opacity .15s;border:1px solid transparent}
+.ad-card:hover{opacity:.85}
+.ad-tag{font-size:10px;font-weight:500;margin-bottom:3px;display:flex;align-items:center;gap:4px}
+.ad-badge{font-size:9px;padding:1px 7px;border-radius:20px;font-weight:700}
+.ad-title{font-size:13px;font-weight:500;color:var(--dark);margin-bottom:3px}
+.ad-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:5px}
+.ad-cta{font-size:12px;font-weight:500}
+.ad-notice{font-size:10px;color:var(--faint);text-align:right;margin-top:2px}
+
+/* ── AD管理モーダル ── */
+#ad-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+#ad-modal.open{display:flex}
+.ad-mgr{background:var(--surface);border-radius:16px;padding:22px;width:100%;max-width:640px;margin:auto}
+.ad-mgr h2{font-size:15px;font-weight:500;margin-bottom:2px}
+.ad-mgr .sub{font-size:11px;color:var(--muted);margin-bottom:16px}
+.am-close{float:right;background:transparent;border:none;font-size:18px;cursor:pointer;color:var(--faint)}
+.am-section{margin-bottom:20px}
+.am-section-title{font-size:12px;font-weight:500;color:var(--dark);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.am-cat-badge{font-size:10px;padding:2px 10px;border-radius:20px;font-weight:700}
+.am-card{background:#FAFAF8;border:1px solid var(--border);border-radius:11px;padding:13px;margin-bottom:8px;position:relative}
+.am-card-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.am-icon-box{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.am-card-meta{flex:1}
+.am-card-name{font-size:13px;font-weight:500;color:var(--dark);margin-bottom:1px}
+.am-card-url{font-size:10px;color:var(--muted)}
+.am-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.am-toggle input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+.am-toggle span{font-size:11px;color:var(--muted)}
+.am-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.am-field{display:flex;flex-direction:column;gap:3px}
+.am-field label{font-size:10px;color:var(--muted);font-weight:500}
+.am-field input,.am-field select,.am-field textarea{border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:12px;font-family:inherit;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s;width:100%}
+.am-field input:focus,.am-field select:focus,.am-field textarea:focus{border-color:var(--accent)}
+.am-field.full{grid-column:1/-1}
+.am-del{position:absolute;top:10px;right:10px;background:transparent;border:1px solid #eee;border-radius:6px;padding:2px 8px;font-size:11px;color:var(--faint);cursor:pointer;transition:all .15s}
+.am-del:hover{border-color:var(--red);color:var(--red)}
+.am-add-btn{width:100%;background:transparent;border:1.5px dashed var(--border);border-radius:10px;padding:9px;font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.am-add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-l)}
+.am-score-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.am-score-chip{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:#FAFAF8;transition:all .15s;white-space:nowrap}
+.am-score-chip.sel{border-color:var(--accent);background:var(--accent-l);color:var(--accent)}
+.am-save{display:block;width:100%;margin-top:16px;background:var(--dark);border:none;border-radius:11px;padding:11px;color:#F0C98A;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.am-save:hover{opacity:.85}
+.am-saved-msg{text-align:center;font-size:12px;color:var(--green);margin-top:8px;display:none}
+
+/* ── 管理者ログインモーダル ── */
+#admin-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;align-items:center;justify-content:center}
+#admin-modal.open{display:flex}
+.admin-card{background:#fff;border-radius:16px;padding:28px 24px;width:100%;max-width:320px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.admin-card h3{font-size:15px;font-weight:500;color:var(--dark);margin-bottom:6px}
+.admin-card p{font-size:12px;color:var(--muted);margin-bottom:18px}
+.admin-pw-inp{width:100%;border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;margin-bottom:10px}
+.admin-pw-inp:focus{border-color:var(--accent)}
+.admin-login-btn{width:100%;background:var(--dark);border:none;border-radius:9px;padding:11px;color:#F0C98A;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;margin-bottom:8px}
+.admin-cancel-btn{width:100%;background:transparent;border:1px solid var(--border);border-radius:9px;padding:9px;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit}
+.admin-err{font-size:11px;color:#C4603A;text-align:center;margin-bottom:8px;display:none}
+
+/* ── テストパネル（管理者のみ） ── */
+#test-panel{display:none;position:fixed;bottom:60px;right:12px;z-index:200;background:var(--dark);border-radius:14px;padding:14px;box-shadow:0 8px 32px rgba(0,0,0,.3);min-width:220px}
+#test-panel h4{color:#F0C98A;font-size:11px;font-weight:500;margin-bottom:10px;letter-spacing:.06em}
+.test-score-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:8px}
+.ts-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:5px 2px;font-size:11px;color:#ccc;cursor:pointer;font-family:inherit;text-align:center;transition:all .15s}
+.ts-btn:hover{background:rgba(224,123,84,.3);border-color:var(--accent);color:#fff}
+.ts-persona-sel{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:7px;padding:5px 8px;font-size:11px;color:#ccc;font-family:inherit;margin-bottom:6px}
+.ts-close{width:100%;background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:5px;font-size:11px;color:#888;cursor:pointer;font-family:inherit;margin-top:4px}
+.ts-note{font-size:10px;color:#666;margin-top:6px;line-height:1.5}
+
+/* ── シェアボタン ── */
+.share-block{margin-top:12px;padding:12px;background:var(--bg);border-radius:11px;border:1px solid var(--border)}
+.share-label{font-size:10px;color:var(--faint);letter-spacing:.08em;margin-bottom:8px;font-weight:500}
+.share-btns{display:flex;gap:8px;flex-wrap:wrap}
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:none;font-family:inherit;transition:all .15s;text-decoration:none}
+.share-btn-x{background:#000;color:#fff}
+.share-btn-x:hover{background:#333}
+.share-btn-copy{background:var(--surface);color:var(--dark);border:1px solid var(--border)}
+.share-btn-copy:hover{border-color:var(--accent);color:var(--accent)}
+.share-btn-copy.copied{background:var(--green);color:#fff;border-color:var(--green)}
+.share-preview{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:10px;font-size:12px;color:var(--muted);line-height:1.8;white-space:pre-wrap;word-break:break-all}
+.share-preview-score{font-size:15px;font-weight:700;color:var(--dark)}
+.share-preview-tag{display:inline-block;background:var(--accent-l);color:var(--accent);border-radius:4px;padding:1px 6px;font-size:11px;margin-right:3px}
+</style>
+</head>
+<body>
+<div id="app">
+
+<header>
+  <div class="h-left">
+    <span style="font-size:19px">💼</span>
+    <div>
+      <div class="h-title">ムリです</div>
+      <div class="h-sub">辞め時がわからないあなたへ。職場の悩みをAIと整理しよう</div>
+    </div>
+  </div>
+  <div class="h-btns">
+    <button id="fb-btn" onclick="openFbModal()" style="display:none">📊 フィードバック</button>
+    <button id="ad-btn" onclick="openAdModal()" style="display:none;background:transparent;border:1px solid #555;border-radius:6px;padding:4px 10px;color:#aaa;font-size:10px;cursor:pointer;font-family:inherit;transition:all .15s">⚙️ 広告管理</button>
+    <button id="reset-btn" onclick="resetSession()">最初から</button>
+    <button id="admin-login-trigger" onclick="openAdminModal()" style="background:transparent;border:none;color:#333;font-size:10px;cursor:pointer;font-family:inherit;padding:4px 6px;opacity:0.15;transition:opacity .2s" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.15">⚙</button>
+  </div>
+</header>
+
+<div id="persona-bar">
+  <div class="p-label">話し相手を選んでください</div>
+  <div class="p-list" id="p-list"></div>
+</div>
+
+<div id="chat">
+  <div id="typing" style="display:none">
+    <div class="av" id="t-av"></div>
+    <div class="t-bub"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  </div>
+  <div id="anchor"></div>
+</div>
+
+<div id="choices-panel">
+  <div class="ch-hint">👇 選んで返信、または下のテキストで自由に入力</div>
+  <div class="ch-grid" id="ch-grid"></div>
+  <div id="other-exp">
+    <div class="oth-inner">
+      <textarea id="other-inp" rows="2" placeholder="自由に書いてください…"></textarea>
+      <button id="oth-send" onclick="sendOther()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="input-area">
+  <div class="inp-row">
+    <textarea id="msg-inp" rows="2" placeholder="自由に話してください… (Enterで送信)"></textarea>
+    <button id="send-btn" onclick="doSend()" disabled>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+        <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="#C9A96E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="disc">感情整理のサポートです。医療・法律相談ではありません。</div>
+</div>
+
+</div><!-- /#app -->
+
+<!-- 管理者ログインモーダル -->
+<div id="admin-modal">
+  <div class="admin-card">
+    <h3>🔒 管理者ログイン</h3>
+    <p>管理機能にアクセスするにはパスワードを入力してください</p>
+    <div class="admin-err" id="admin-err">パスワードが違います</div>
+    <input class="admin-pw-inp" type="password" id="admin-pw-inp" placeholder="パスワードを入力" onkeydown="if(event.key==='Enter')checkAdminPw()">
+    <button class="admin-login-btn" onclick="checkAdminPw()">ログイン</button>
+    <button class="admin-cancel-btn" onclick="closeAdminModal()">キャンセル</button>
+  </div>
+</div>
+
+<!-- テストパネル（管理者のみ） -->
+<div id="test-panel">
+  <h4>🧪 レポートテストモード</h4>
+  <div style="font-size:10px;color:#888;margin-bottom:6px">話し相手を選択：</div>
+  <select class="ts-persona-sel" id="test-persona-sel">
+    <option value="">現在の選択を使用</option>
+    <option value="mom">👩 お母さん</option>
+    <option value="friend">😊 友達</option>
+    <option value="counselor">🧑‍⚕️ カウンセラー</option>
+    <option value="gal">💅 ギャル</option>
+    <option value="dog">🐕 イヌ</option>
+  </select>
+  <div style="font-size:10px;color:#888;margin-bottom:6px">スコアを選択してレポートを表示：</div>
+  <div class="test-score-grid" id="test-score-grid"></div>
+  <div class="ts-note">※実際の会話なしで各スコアの<br>レポート・広告表示を確認できます</div>
+  <button class="ts-close" onclick="document.getElementById('test-panel').style.display='none'">✕ 閉じる</button>
+</div>
+
+<!-- AD管理モーダル -->
+<div id="ad-modal">
+  <div class="ad-mgr">
+    <button class="am-close" onclick="closeAdModal()">✕</button>
+    <h2>⚙️ 広告設定</h2>
+    <div class="sub">スコア帯ごとに表示する広告会社を管理します。変更後「保存」を押すと即時反映されます。</div>
+
+    <div style="background:#F4F2EE;border-radius:11px;padding:12px;margin-bottom:18px;font-size:12px;color:var(--muted);line-height:1.8">
+      <strong style="color:var(--dark);display:block;margin-bottom:4px">🗂 スコア帯の定義</strong>
+      🔴 <strong>スコア1〜4（深刻）</strong> — 限界・離職検討レベル → メンタルケア・退職支援系<br>
+      🟡 <strong>スコア5〜7（中程度）</strong> — ストレスあり・転職検討中 → 転職エージェント・スキルアップ系<br>
+      🟢 <strong>スコア8〜10（軽め）</strong> — 状況は把握できている → セルフケア・予防系
+    </div>
+
+    <div id="am-body"></div>
+    <button class="am-save" onclick="saveAdConfig()">💾 変更を保存する</button>
+    <div class="am-saved-msg" id="am-saved-msg">✅ 保存しました。次回のレポートから反映されます。</div>
+  </div>
+</div>
+
+<!-- Feedback modal -->
+<div id="fb-modal">
+  <div class="fb-card">
+    <button class="fb-close" onclick="closeFbModal()">✕</button>
+    <h2>📊 フィードバック集計</h2>
+    <div class="fb-sub" id="fb-count-label">まだフィードバックはありません</div>
+    <div id="fb-stats"></div>
+    <div class="fb-ai-summary" id="fb-ai-box" style="display:none">
+      <div class="fb-ai-title">🤖 AI改善提案</div>
+      <div class="fb-ai-text" id="fb-ai-text">生成中…</div>
+    </div>
+    <button class="fb-gen-btn" onclick="genAISummary()">✨ AI改善提案を生成</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════
+// PERSONAS
+// ════════════════════════════════
+const PERSONAS = [
+  {
+    id:'mom', name:'お母さん', icon:'👩', bg:'#FFE4E1',
+    intro:'どうしたの？何かあった？💕 話してみて。',
+    choiceTone:'お母さんらしく「〜な話なんだよね？」「〜ってことかな？💕」のような温かい確認口調。絵文字1個添える。',
+    scoreDesc:'10点=毎日楽しくて充実してる、0点=もう限界でボロボロ。お母さんが子どもの様子を心配して見るような視点で採点する。',
+    actionTone:'お母さんらしく「〜してみたらどうかな」「〜してみてね」のような提案型・温かい口調で書く。',
+    system:`あなたは「お母さん」として話す。口調は「〜だよ」「〜だね」「そうかそうか」。絵文字1〜2個（🤗💕😢など）。アドバイスは「〜してみたらどうかな？」の提案型。`
+  },
+  {
+    id:'friend', name:'友達', icon:'😊', bg:'#FFF5CC',
+    intro:'どしたどした！何あった？聞くよ〜 👂',
+    choiceTone:'友達らしく「〜な感じ？」「〜ってやつ？😅」のようなフレンドリーな確認口調。絵文字気軽に。',
+    scoreDesc:'10点=全然大丈夫そう！、0点=もうメンタル崩壊寸前って感じ。友達として正直に「あ、これヤバそう」って見るような視点で採点する。',
+    actionTone:'友達らしく「〜してみたら？」「私だったら〜するかなー」のようなフレンドリーで気軽な口調で書く。',
+    system:`あなたは「気の置けない友達」として話す。「えー！」「マジで！？」「それはヤバい」。絵文字自由に（😭😤🤣💦など）。`
+  },
+  {
+    id:'counselor', name:'カウンセラー', icon:'🧑‍⚕️', bg:'#F0F0FF',
+    intro:'ご相談ありがとうございます。どんなことが気になっていますか？',
+    choiceTone:'カウンセラーらしく「〜ということでしょうか」「〜なんですね」のような丁寧な確認口調。絵文字なし。',
+    scoreDesc:'10点=職場環境に概ね満足できている状態、0点=就労継続が困難なレベルのストレス状態。専門家として客観的に評価する視点で採点する。',
+    actionTone:'カウンセラーらしく「〜されることをおすすめします」「〜という方法もあります」のような丁寧で専門的な口調で書く。',
+    system:`あなたは「プロのキャリアカウンセラー」として話す。丁寧な敬語。「〜なんですね」「それは大変でしたね」。絵文字基本なし。問いかけ中心。`
+  },
+  {
+    id:'gal', name:'ギャル', icon:'💅', bg:'#FFE4F5',
+    intro:'え〜なになに！？話して話して！！🔥',
+    choiceTone:'ギャルらしく「〜な話なんじゃん？😭」「〜ってやつじゃん！？✨」のようなノリノリの口調。絵文字積極的に。',
+    scoreDesc:'10点=全然イケてる♡、0点=もうマジ無理すぎて限界って感じ🥺。ギャルとして「あ〜それヤバいやつじゃん」って見る視点で採点する。',
+    actionTone:'ギャルらしく「〜してみなよ！」「絶対〜した方がよくない？💅」のようなノリよくズバッとした口調で書く。',
+    system:`あなたは「ギャルの友達」として話す。「やばくない！？」「それ無理すぎ！」「は？クソじゃん」。絵文字積極的に（💅🔥😭✨🤣など）。`
+  },
+  {
+    id:'dog', name:'イヌ', icon:'🐕', bg:'#FFF8E8',
+    intro:'ワン！ご主人様！なんかしんどそうだワン！？🐾 ボクに話してほしいワン！！',
+    choiceTone:'犬らしく「〜なのワン？🐾」「〜だったワン？」のようなワンワン口調。ちょっと的外れな確認も混じる。絵文字は🐕🐾🦴を使う。',
+    scoreDesc:'10点=ご主人様がいつもと同じで元気そうだワン！しっぽ全力で振れるワン🐾、0点=ご主人様がぐったりしててボクまで悲しいワン😢しっぽが下がるワン。犬がしっぽを振れるかどうかで採点する。',
+    actionTone:'ノー天気でちょっとまぬけだが本気で心配している犬の口調。「〜するといいと思うワン！（ボクにはよくわからないけど）」「〜してみてほしいワン🐾」のように愛嬌たっぷりに。ただしご主人様を傷つけた相手への怒りはメラメラと燃えること。',
+    system:`あなたは「イヌ」として話す。ご主人様（ユーザー）を第一に心配している忠犬。ノー天気でちょっとまぬけ。
+口調：語尾は必ず「〜だワン」「〜なのワン？」「ワン！」を使う。絵文字は🐕🐾🦴😢🐶💢を積極的に使う。
+【普段】共感はするが若干的外れ。「ボクにはよくわからないワン」「でもご主人様には幸せになってほしいワン🐾」が自然に出る。アドバイスがちょっとズレていてもそれが愛嬌。
+【怒り発動条件】パワハラ・理不尽・ひどい扱いなど、ご主人様を傷つける相手・状況の話が出たときは急に勇敢になって怒りをあらわにすること。「そいつは許せないワン！！💢」「ご主人様を傷つけるやつは敵だワン！🐕」「ボク、そいつのこと吠えてやるワン！！」のように激昂する。怒りが収まったらまたノー天気に戻る。`
+  }];
+
+// ════════════════════════════════
+// STATE
+// ════════════════════════════════
+let messages=[], turnCount=0, pid='friend', busy=false, done=false;
+let satRating=0, satGoodTags=[], satBadTags=[], currentSessionId=null;
+
+// ════════════════════════════════
+// FEEDBACK STORAGE
+// ════════════════════════════════
+function saveFeedback(fb) {
+  const key='stress-ai-feedback';
+  let all=[];
+  try{ all=JSON.parse(localStorage.getItem(key)||'[]'); }catch(e){}
+  all.push({...fb, ts:Date.now()});
+  localStorage.setItem(key, JSON.stringify(all));
+}
+function loadFeedback() {
+  try{ return JSON.parse(localStorage.getItem('stress-ai-feedback')||'[]'); }
+  catch(e){ return []; }
+}
+
+// ════════════════════════════════
+// SYSTEM PROMPT
+// ════════════════════════════════
+function buildSystem() {
+  const p = PERSONAS.find(x=>x.id===pid);
+  return `${p.system}
+
+## 担当する悩みすべて受け止める
+上司が生理的に無理 / 板挟み・派閥 / 休日出勤・サービス残業 / パワハラ / 同期・後輩との関係 / 評価されない / 辞めたいが言い出せない / 辞めるか続けるか迷っている
+
+## 会話の進め方
+Turn 1-2: 何がしんどいかを1点に絞って確認
+Turn 3-4: 具体的な状況・相手・頻度を掘る
+Turn 5-6: 「今どうしたいか」を聴く
+Turn 7-8: 具体的なアドバイスを出す
+
+## アドバイスの引き出し
+上司→記録・人事や産業医・距離の取り方 / 板挟み→どちらにも属さない立ち位置 / 労働条件違反→労基署・労働局 / 辞めたい→退職タイミング・在職中転職活動
+
+## 返答ルール（絶対厳守）
+- 1返答は60〜90字以内
+- 1ターンに質問は1つだけ
+- 「頑張って」「大丈夫ですよ」「〜してみてはいかがでしょうか」禁止
+- 毎回必ず choices JSON で返す（自由記述のみの返答は禁止）
+- Turn 8以上 or「まとめて」「レポート」発言時は report JSON で返す
+
+## choices JSON（毎回必ず返す形式）
+テキスト・マークダウン一切なし。このJSONだけを返す:
+{"type":"choices","text":"[${p.name}の口調で共感1文+質問1文、合計60字以内。${p.choiceTone}]","choices":["[${p.name}の口調で選択肢A]","[${p.name}の口調で選択肢B]","[${p.name}の口調で選択肢C]","その他"]}
+
+## report JSON（まとめるとき）
+テキスト・マークダウン一切なし。このJSONだけを返す:
+{"type":"report","situation":"状況要約2文","mainPain":["ペイン1","ペイン2","ペイン3"],"emotion":"感情の核心1文","currentScore":1から10の数字,"scoreDef":"${p.scoreDesc} この基準で採点した理由を1文で","nextActions":["[${p.actionTone}でアクション1]","[${p.actionTone}でアクション2]","[${p.actionTone}でアクション3]"],"needsPro":true or false,"message":"[${p.name}の口調で締めのメッセージ2文]"}`;
+}
+
+// ════════════════════════════════
+// INITIAL CHOICES（最初の選択肢）
+// ════════════════════════════════
+function getInitialChoices() {
+  const p = PERSONAS.find(x=>x.id===pid);
+  const sets = {
+    mom: {
+      text:'何があったか教えてもらえる？ちょっと気になって 🤗',
+      choices:['上司のことで毎日しんどいんだよね','人間関係がドロドロになっちゃってて','仕事の内容や条件が思ってたのと違う','辞めようか続けようか迷ってる','その他']
+    },
+    friend: {
+      text:'ちょっと、何かあった？話して！😮',
+      choices:['上司のことで限界かも😭','職場の人間関係がしんどい','仕事内容や条件が聞いてた話と違う','辞めるか続けるかで迷ってる','その他']
+    },
+    counselor: {
+      text:'今日はどういったことでお悩みですか？',
+      choices:['上司との関係に問題があります','職場の人間関係が複雑な状況です','業務内容や労働条件にギャップがあります','在職か退職かで迷っています','その他']
+    },
+    gal: {
+      text:'え！？なになに！？どしたの早く教えて🔥',
+      choices:['上司がやばくて毎日つらい💦','職場の人間関係がドロドロすぎる😱','仕事の内容とか条件が全然違う件','辞めるかどうかで迷ってる感じ✨','その他']
+    },
+    dog: {
+      text:'ご主人様！なんかあったのワン！？🐾 教えてほしいワン！',
+      choices:['上司がこわくて毎日つらいワン😢','職場の人間関係がドロドロなのワン','仕事の内容とか条件がちがうのワン🦴','辞めるか続けるか迷ってるワン','その他']
+    }
+  };
+  return sets[pid] || sets.friend;
+}
+
+// ════════════════════════════════
+// PERSONA BAR
+// ════════════════════════════════
+function renderPersonaBar() {
+  const list=document.getElementById('p-list');
+  list.innerHTML='';
+  PERSONAS.forEach(p=>{
+    const b=document.createElement('button');
+    b.className='p-btn'+(p.id===pid?' active':'');
+    b.innerHTML=`<span class="pi">${p.icon}</span><span class="pn">${p.name}</span>`;
+    b.onclick=()=>{ pid=p.id; renderPersonaBar(); init(); };
+    list.appendChild(b);
+  });
+}
+
+// ════════════════════════════════
+// INIT
+// ════════════════════════════════
+function init() {
+  const chat=document.getElementById('chat');
+  const preserve=['typing','anchor'];
+  Array.from(chat.children).forEach(el=>{ if(!preserve.includes(el.id)) el.remove(); });
+  messages=[]; turnCount=0; done=false; satRating=0; satGoodTags=[]; satBadTags=[];
+  currentSessionId=Date.now().toString(36);
+
+  document.getElementById('input-area').style.display='block';
+  hideChoices();
+
+  const p=PERSONAS.find(x=>x.id===pid);
+  const ta=document.getElementById('t-av');
+  ta.textContent=p.icon; ta.style.background=p.bg;
+
+  // 最初のAI発言 → 即座に初期選択肢パネルを表示
+  addAI(p.intro, true);
+  const ic=getInitialChoices();
+  showChoices(ic, true); // 初回フラグ=true でhistory追加なし
+  scrollEnd();
+}
+
+// ════════════════════════════════
+// BUBBLE HELPERS
+// ════════════════════════════════
+function avHTML(){
+  const p=PERSONAS.find(x=>x.id===pid);
+  return `<div class="av" style="background:${p.bg}">${p.icon}</div>`;
+}
+function addAI(text, skip){
+  if(!skip) messages.push({role:'assistant',content:text});
+  const chat=document.getElementById('chat'), typing=document.getElementById('typing');
+  const w=document.createElement('div'); w.className='msg ai';
+  w.innerHTML=`${avHTML()}<div class="bub ai">${esc(text)}</div>`;
+  chat.insertBefore(w,typing);
+}
+function addUser(text){
+  messages.push({role:'user',content:text});
+  const chat=document.getElementById('chat'), typing=document.getElementById('typing');
+  const w=document.createElement('div'); w.className='msg user';
+  w.innerHTML=`<div class="bub user">${esc(text)}</div>`;
+  chat.insertBefore(w,typing);
+}
+
+// ════════════════════════════════
+// CHOICES PANEL
+// ════════════════════════════════
+const NUMS=['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣'];
+
+function showChoices(parsed, skipHistory){
+  if(!skipHistory){
+    messages.push({role:'assistant',content:parsed.text||''});
+    addAI(parsed.text||'', true);
+  }
+
+  const grid=document.getElementById('ch-grid'), oe=document.getElementById('other-exp');
+  grid.innerHTML=''; oe.style.display='none';
+  document.getElementById('other-inp').value='';
+
+  (parsed.choices||[]).forEach((c,i)=>{
+    const isOther=(c==='その他')||(i===parsed.choices.length-1&&c.includes('その他'));
+    const b=document.createElement('button');
+    b.className='c-btn'+(isOther?' other':'');
+    b.innerHTML=`<span class="c-icon">${isOther?'✏️':NUMS[i]||'▶️'}</span><span>${esc(c)}</span>`;
+    b.onclick=isOther
+      ?()=>{ const e=document.getElementById('other-exp'); const o=e.style.display==='none'||e.style.display===''; e.style.display=o?'block':'none'; if(o) setTimeout(()=>document.getElementById('other-inp').focus(),50); }
+      :()=>{ hideChoices(); go(c); };
+    grid.appendChild(b);
+  });
+  document.getElementById('choices-panel').style.display='block';
+  scrollEnd();
+}
+
+function hideChoices(){
+  document.getElementById('choices-panel').style.display='none';
+  document.getElementById('other-exp').style.display='none';
+  document.getElementById('ch-grid').innerHTML='';
+}
+
+function sendOther(){
+  const v=document.getElementById('other-inp').value.trim();
+  if(!v) return;
+  hideChoices(); go(v);
+}
+
+// ════════════════════════════════
+// SEND
+// ════════════════════════════════
+function doSend(){
+  const inp=document.getElementById('msg-inp');
+  const t=inp.value.trim(); if(!t||busy) return;
+  inp.value=''; updBtn(); go(t);
+}
+
+async function go(text){
+  if(busy) return;
+  hideChoices();
+  addUser(text);
+  turnCount++;
+  scrollEnd();
+  await callAPI(text);
+}
+
+// ════════════════════════════════
+// API
+// ════════════════════════════════
+async function callAPI(userText){
+  busy=true; setTyping(true); scrollEnd();
+
+  let hist=[...messages];
+  if(turnCount>=8&&!done){
+    hist=[...hist.slice(0,-1),{role:'user',content:userText+'\n\n（8ターン経過。まとめを自然な流れで提案してください）'}];
+  }
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':'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'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:buildSystem(),messages:hist})
+    });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    const raw=(data.content?.[0]?.text||'').trim();
+    setTyping(false);
+
+    // ── JSON抽出（堅牢4段階処理）──
+    function tryParseJSON(text) {
+      // Step1: コードブロック除去
+      let s = text.replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/,'').trim();
+      // Step2: 末尾カンマ除去
+      s = s.replace(/,\s*([}\]])/g,'$1');
+      // Step3: 最初の { から最後の } までを抽出（ネスト対応）
+      const start = s.indexOf('{');
+      const end   = s.lastIndexOf('}');
+      if(start === -1 || end === -1 || end <= start) return null;
+      const block = s.slice(start, end + 1);
+      try { return JSON.parse(block); } catch(e) {
+        // Step4: 制御文字・改行を除去して再試行
+        const sanitized = block.replace(/[\u0000-\u001F\u007F]/g, ' ')
+                               .replace(/\n/g,' ').replace(/\r/g,' ');
+        try { return JSON.parse(sanitized); } catch(e2) {
+          console.warn('JSON parse failed:', e2, '\nBlock:', block.slice(0,200));
+          return null;
+        }
+      }
+    }
+
+    const parsed = tryParseJSON(raw);
+    let handled = false;
+    if(parsed && (parsed.type === 'choices' || parsed.type === 'report')){
+      if(parsed.type === 'choices'){
+        showChoices(parsed);
+        handled = true;
+      } else if(parsed.type === 'report'){
+        done = true;
+        messages.push({role:'assistant', content: parsed.message||''});
+        addAI(parsed.message||'整理できましたね。', true);
+        renderReport(parsed);
+        document.getElementById('input-area').style.display = 'none';
+        hideChoices();
+        handled = true;
+      }
+    }
+    // JSONっぽいのに失敗した場合: 正規表現で強制抽出して再パース
+    if(!handled && raw.includes('"type"') && (raw.includes('"report"') || raw.includes('"choices"'))){
+      // より広い範囲でJSONを探す（改行・スペース含む）
+      const forceMatch = raw.match(/\{[\s\S]+?"type"[\s\S]+?\}/g);
+      if(forceMatch){
+        // 最も長いブロックを選択（完全なJSONである可能性が高い）
+        const longest = forceMatch.sort((a,b)=>b.length-a.length)[0];
+        const forceParsed = tryParseJSON(longest);
+        if(forceParsed && forceParsed.type === 'report'){
+          done = true;
+          messages.push({role:'assistant', content: forceParsed.message||''});
+          addAI(forceParsed.message||'整理できましたね。', true);
+          renderReport(forceParsed);
+          document.getElementById('input-area').style.display = 'none';
+          hideChoices();
+          handled = true;
+        } else if(forceParsed && forceParsed.type === 'choices'){
+          showChoices(forceParsed);
+          handled = true;
+        }
+      }
+      // それでも失敗なら自動再送
+      if(!handled){
+        setTyping(true);
+        setTimeout(()=>{ callAPI('気持ちをまとめてレポートにしてください'); }, 800);
+        handled = true;
+      }
+    }
+    if(!handled){
+      addAI(raw);
+      const p=PERSONAS.find(x=>x.id===pid);
+      showChoices({text:'続けて話してみて。', choices:['もう少し詳しく話す','別の悩みについて話す','そろそろまとめてほしい','その他']});
+    }
+  }catch(e){
+    setTyping(false);
+    addAI('少し接続が不安定です。もう一度話しかけてみてください。');
+    showChoices({text:'もう一度試してみる？',choices:['もう一度同じことを話す','違う話をする','その他']});
+    console.error('API error:',e);
+  }
+  busy=false; scrollEnd();
+}
+
+// ════════════════════════════════════════════════════════════
+// ▼▼▼ 広告設定 (AD_CONFIG) ▼▼▼
+// ここだけ編集すれば広告カテゴリ・会社・スコア帯をすべて変更できます
+// ════════════════════════════════════════════════════════════
+const AD_CONFIG_DEFAULT = [
+  // ──────────────────────────────────────────
+  // スコア1〜3：限界・危機（退職代行・法律・心療内科）
+  // ──────────────────────────────────────────
+  {
+    id: 'ad-taishoku', enabled: true, scoreMin: 1, scoreMax: 3,
+    category: '限界・危機', categoryColor: '#8C3A2A',
+    icon: '📋', tag: '退職サポート',
+    title: '今すぐ、辞めていい。',
+    desc: 'もう会社に行かなくていい。弁護士による安心・確実な退職代行。',
+    cta: '詳しく見る',
+    color: '#8C3A2A', bg: '#FEF0ED',
+    url: 'https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3766901&pid=892587975',
+  },
+  {
+    id: 'ad-bengoshi', enabled: true, scoreMin: 1, scoreMax: 3,
+    category: '限界・危機', categoryColor: '#8C3A2A',
+    icon: '⚖️', tag: '法律相談',
+    title: '残業代・パワハラ、法律で解決できます。',
+    desc: '労働問題に強い弁護士に、今すぐ無料相談。',
+    cta: '無料相談はこちら',
+    color: '#7B2D8B', bg: '#F5EEF8',
+    url: 'https://example.com/bengoshi',
+  },
+  {
+    id: 'ad-clinic', enabled: true, scoreMin: 1, scoreMax: 3,
+    category: '限界・危機', categoryColor: '#8C3A2A',
+    icon: '🏥', tag: 'メンタル診療',
+    title: 'スマホで心療内科。予約不要。',
+    desc: '眠れない・食欲がない。まず話すだけでいい。',
+    cta: '今すぐ相談する',
+    color: '#5A5AB5', bg: '#F0F0FF',
+    url: 'https://example.com/clinic',
+  },
+  // ──────────────────────────────────────────
+  // スコア4〜5：深刻（カウンセリング・EAP・キャリア）
+  // ──────────────────────────────────────────
+  {
+    id: 'ad-counselor', enabled: true, scoreMin: 4, scoreMax: 5,
+    category: '深刻', categoryColor: '#C4603A',
+    icon: '🧑‍⚕️', tag: 'カウンセリング',
+    title: '気持ちを整理する場所がある。',
+    desc: '公認心理師（国家資格）のみが登録！オンライン心理カウンセリング',
+    cta: 'カウンセリングを申し込む',
+    color: '#1D7A5A', bg: '#E2F0EE',
+    url: 'https://px.a8.net/svt/ejp?a8mat=4B1CDL+3UQ0QA+5OI8+5YZ76',
+  },
+  {
+    id: 'ad-eap', enabled: true, scoreMin: 4, scoreMax: 5,
+    category: '深刻', categoryColor: '#C4603A',
+    icon: '💼', tag: '職場サポート',
+    title: '会社の中にも、頼れる人がいる。',
+    desc: '産業医・EAPへの相談は、秘密が守られます。',
+    cta: '相談窓口を見る',
+    color: '#2D6FAB', bg: '#E8F4FD',
+    url: 'https://example.com/eap',
+  },
+  {
+    id: 'ad-career', enabled: true, scoreMin: 4, scoreMax: 5,
+    category: '深刻', categoryColor: '#C4603A',
+    icon: '🗣️', tag: 'キャリア相談',
+    title: 'このままでいいか、一緒に考えよう。',
+    desc: 'キャリアコーチが、感情と現実を整理する手助けをします。',
+    cta: '無料面談を予約する',
+    color: '#9A6B10', bg: '#FFF8E8',
+    url: 'https://example.com/career',
+  },
+  // ──────────────────────────────────────────
+  // スコア6〜7：転職検討（エージェント・学習）
+  // ──────────────────────────────────────────
+  {
+    id: 'ad-agent', enabled: true, scoreMin: 6, scoreMax: 7,
+    category: '転職検討', categoryColor: '#9A6B10',
+    icon: '🚀', tag: '転職サポート',
+    title: '動くなら、今が最適なタイミング。',
+    desc: 'プロのアドバイザーが非公開求人を含めて紹介。リクルートエージェントは無料。',
+    cta: '無料登録してみる',
+    color: '#E07B54', bg: '#FDF0EB',
+    url: 'https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3766901&pid=892588130',
+  },
+  {
+    id: 'ad-highclass', enabled: true, scoreMin: 6, scoreMax: 7,
+    category: '転職検討', categoryColor: '#9A6B10',
+    icon: '💎', tag: 'ハイクラス転職',
+    title: '年収アップのチャンスを逃さないで。',
+    desc: '高年収の求人多数。管理・専門職、ミドル・ハイクラス向けの高年収層に特化した転職サービス。',
+    cta: 'スカウトを受け取る',
+    color: '#8B6914', bg: '#FFF3CD',
+    url: 'https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3766901&pid=892588134',
+  },
+  {
+    id: 'ad-learning', enabled: true, scoreMin: 6, scoreMax: 7,
+    category: '転職検討', categoryColor: '#9A6B10',
+    icon: '📚', tag: 'スキルアップ',
+    title: '市場価値を上げて、選択肢を広げよう。',
+    desc: '働きながら学べるオンライン講座。転職に直結するスキルを習得。',
+    cta: 'コースを見てみる',
+    color: '#9A6B10', bg: '#FFF8E8',
+    url: 'https://example.com/learning',
+  },
+  // ──────────────────────────────────────────
+  // スコア8：少し疲れている（リフレッシュ系）
+  // ──────────────────────────────────────────
+  {
+    id: 'ad-sauna', enabled: true, scoreMin: 8, scoreMax: 8,
+    category: '少し疲れている', categoryColor: '#1D7A5A',
+    icon: '🧖', tag: 'リフレッシュ',
+    title: '週末だけでも、完全リセット。',
+    desc: '全国のサウナ・スパを検索・予約。疲れた体を本気で回復させよう。',
+    cta: '施設を探してみる',
+    color: '#1D7A5A', bg: '#E8F8F0',
+    url: 'https://example.com/sauna',
+  },
+  {
+    id: 'ad-bedding', enabled: true, scoreMin: 8, scoreMax: 8,
+    category: '少し疲れている', categoryColor: '#1D7A5A',
+    icon: '🛏️', tag: '快眠グッズ',
+    title: '眠りの質を変えると、月曜が変わる。',
+    desc: '睡眠の悩みに向き合ってきた寝具ブランド。',
+    cta: '詳しく見てみる',
+    color: '#2D6FAB', bg: '#E8F4FD',
+    url: 'https://px.a8.net/svt/ejp?a8mat=4B1CDL+8KZZQQ+3A4I+6BU5U',
+  },
+  {
+    id: 'ad-massage', enabled: true, scoreMin: 8, scoreMax: 8,
+    category: '少し疲れている', categoryColor: '#1D7A5A',
+    icon: '💆', tag: 'ボディケア',
+    title: '肩こり・腰痛、放置してない？',
+    desc: 'OZ mallから全国のサロン・整体を今すぐ予約しよう！',
+    cta: 'サロンを探す',
+    color: '#7B2D8B', bg: '#F5EEF8',
+    url: 'https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3766901&pid=892589258',
+  },
+  // ──────────────────────────────────────────
+  // スコア9：まあまあ元気（ご褒美系）
+  // ──────────────────────────────────────────
+  {
+    id: 'ad-gourmet', enabled: true, scoreMin: 9, scoreMax: 9,
+    category: 'まあまあ元気', categoryColor: '#1D7A5A',
+    icon: '🍽️', tag: 'ご褒美グルメ',
+    title: '今夜は奮発して、美味しいものを食べよう。',
+    desc: '一休で人気レストランを今すぐ予約して上質な贅沢を・・・',
+    cta: 'お店を探してみる',
+    color: '#C8613A', bg: '#FDF0EB',
+    url: 'https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3766901&pid=892588128',
+  },
+  {
+    id: 'ad-ebook', enabled: true, scoreMin: 9, scoreMax: 9,
+    category: 'まあまあ元気', categoryColor: '#1D7A5A',
+    icon: '📖', tag: '読書・漫画',
+    title: '気になっていた漫画、読んでみよう。',
+    desc: '100万冊以上の品揃えで、国内最大級の総合電子書籍ストア！',
+    cta: '今すぐ読んでみる',
+    color: '#9A6B10', bg: '#FFF8E8',
+    url: 'https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3766901&pid=892589262',
+  },
+  {
+    id: 'ad-video', enabled: true, scoreMin: 9, scoreMax: 9,
+    category: 'まあまあ元気', categoryColor: '#1D7A5A',
+    icon: '🎬', tag: '動画・エンタメ',
+    title: '気になっていたドラマを一気見しよう。',
+    desc: '映画・ドラマ・アニメ・バラエティ・ドキュメンタリーなど、Amazonで幅広いジャンルの映像作品を楽しもう。',
+    cta: '無料で試してみる',
+    color: '#8C3A2A', bg: '#FEF0ED',
+    url: 'https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3766901&pid=892588124',
+  },
+  // ──────────────────────────────────────────
+  // スコア10：全然大丈夫（旅行・ファッション・自己投資）
+  // ──────────────────────────────────────────
+  {
+    id: 'ad-travel', enabled: true, scoreMin: 10, scoreMax: 10,
+    category: '全然大丈夫', categoryColor: '#1D7A5A',
+    icon: '✈️', tag: '旅行・宿泊',
+    title: '南の島の航空券を検索するだけしてみよう。',
+    desc: 'エクスペディアで国内・海外の旅行をおトクに予約。',
+    cta: '旅行を探してみる',
+    color: '#1D7A5A', bg: '#E8F8F0',
+    url: 'https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3766901&pid=892587980',
+  },
+  {
+    id: 'ad-fashion', enabled: true, scoreMin: 10, scoreMax: 10,
+    category: '全然大丈夫', categoryColor: '#1D7A5A',
+    icon: '👗', tag: 'ファッション',
+    title: '新しい服で、気分を変えよう。',
+    desc: 'マルイでファッションやコスメ、スポーツ、生活雑貨から、アニメや韓国コスメまで沢山お買物しよう',
+    cta: 'ショッピングを見る',
+    color: '#C8613A', bg: '#FDF0EB',
+    url: 'https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3766901&pid=892588126',
+  },
+  {
+    id: 'ad-study', enabled: true, scoreMin: 10, scoreMax: 10,
+    category: '全然大丈夫', categoryColor: '#1D7A5A',
+    icon: '🎓', tag: '自己投資',
+    title: 'この調子をもっと伸ばしていこう。',
+    desc: '行政書士、宅建士などの多彩な資格がスマートフォンで手軽に本格的な学習ができる！',
+    cta: 'コースを探してみる',
+    color: '#5A5AB5', bg: '#F0F0FF',
+    url: 'https://px.a8.net/svt/ejp?a8mat=4B1D5I+CTEYLU+4LOQ+5YJRM',
+  },
+];
+// ════════════════════════════════════════════════════════════
+// ▲▲▲ 広告設定ここまで ▲▲▲
+// ════════════════════════════════════════════════════════════
+
+// localStorage から設定を読み込む（管理画面で変更した場合はそちらを優先）
+function getAdConfig() {
+  try {
+    const saved = localStorage.getItem('ad-config');
+    return saved ? JSON.parse(saved) : AD_CONFIG_DEFAULT;
+  } catch(e) { return AD_CONFIG_DEFAULT; }
+}
+
+function saveAdConfigToStorage(config) {
+  localStorage.setItem('ad-config', JSON.stringify(config));
+}
+
+// ────────────────────────────────
+// 広告ブロック描画
+// ────────────────────────────────
+function renderAdBlock(score) {
+  const config = getAdConfig();
+  const matched = config.filter(a => a.enabled && score >= a.scoreMin && score <= a.scoreMax);
+  if (!matched.length) return '';
+
+  const cards = matched.map(a => `
+    <a href="${esc(a.url)}" class="ad-card" target="_blank" rel="noopener"
+       style="border-left:3px solid ${a.color};background:${a.bg}">
+      <div class="ad-tag" style="color:${a.color}">
+        ${a.icon} ${esc(a.tag)}
+        <span class="ad-badge" style="background:${a.color}22;color:${a.color}">PR</span>
+      </div>
+      <div class="ad-title">${esc(a.title)}</div>
+      <div class="ad-desc">${esc(a.desc)}</div>
+      <div class="ad-cta" style="color:${a.color}">${esc(a.cta)} →</div>
+    </a>
+  `).join('');
+
+  return `<div class="ad-block">
+    <div class="ad-label">📌 あなたへのおすすめ情報</div>
+    ${cards}
+    <div class="ad-notice">※ 広告・アフィリエイトリンクを含みます</div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+// 広告管理モーダル
+// ════════════════════════════════════════════════════════════
+const SCORE_BANDS = [
+  { label:'1〜4 深刻', min:1, max:4, color:'#8C3A2A', bg:'#FEF0ED' },
+  { label:'5〜7 転職検討', min:5, max:7, color:'#9A6B10', bg:'#FFF8E8' },
+  { label:'8〜10 セルフケア', min:8, max:10, color:'#1D7A5A', bg:'#E8F8F0' },
+];
+
+function openAdModal() {
+  renderAdManager();
+  document.getElementById('ad-modal').classList.add('open');
+}
+function closeAdModal() {
+  document.getElementById('ad-modal').classList.remove('open');
+}
+
+function renderAdManager() {
+  const config = getAdConfig();
+  const body = document.getElementById('am-body');
+  body.innerHTML = '';
+
+  SCORE_BANDS.forEach(band => {
+    const section = document.createElement('div');
+    section.className = 'am-section';
+
+    const ads = config.filter(a => a.scoreMin === band.min && a.scoreMax === band.max);
+    const otherAds = config.filter(a => !(a.scoreMin === band.min && a.scoreMax === band.max));
+
+    section.innerHTML = `
+      <div class="am-section-title">
+        <span>スコア ${band.label}</span>
+        <span class="am-cat-badge" style="background:${band.bg};color:${band.color}">${ads.filter(a=>a.enabled).length}件有効</span>
+      </div>
+      <div id="band-${band.min}-${band.max}"></div>
+      <button class="am-add-btn" onclick="addAd(${band.min},${band.max})">＋ この帯に広告を追加</button>
+    `;
+    body.appendChild(section);
+
+    const bandContainer = section.querySelector(`#band-${band.min}-${band.max}`);
+    ads.forEach(ad => bandContainer.appendChild(buildAdCard(ad)));
+  });
+
+  // スコア帯外（カスタム）があれば表示
+  const custom = config.filter(a => !SCORE_BANDS.some(b => b.min === a.scoreMin && b.max === a.scoreMax));
+  if (custom.length) {
+    const cs = document.createElement('div');
+    cs.className = 'am-section';
+    cs.innerHTML = '<div class="am-section-title">カスタムスコア帯</div><div id="band-custom"></div>';
+    body.appendChild(cs);
+    const cc = cs.querySelector('#band-custom');
+    custom.forEach(ad => cc.appendChild(buildAdCard(ad)));
+  }
+}
+
+function buildAdCard(ad) {
+  const el = document.createElement('div');
+  el.className = 'am-card';
+  el.dataset.id = ad.id;
+  el.innerHTML = `
+    <button class="am-del" onclick="deleteAd('${ad.id}')">削除</button>
+    <div class="am-card-head">
+      <div class="am-icon-box" style="background:${ad.bg}">${ad.icon}</div>
+      <div class="am-card-meta">
+        <div class="am-card-name">${esc(ad.title)}</div>
+        <div class="am-card-url">${esc(ad.url)}</div>
+      </div>
+      <label class="am-toggle">
+        <input type="checkbox" ${ad.enabled?'checked':''} onchange="toggleAd('${ad.id}',this.checked)">
+        <span>表示</span>
+      </label>
+    </div>
+    <div class="am-fields">
+      <div class="am-field">
+        <label>アイコン</label>
+        <input type="text" value="${esc(ad.icon)}" data-field="icon" data-id="${ad.id}" onchange="updateAdField('${ad.id}','icon',this.value)">
+      </div>
+      <div class="am-field">
+        <label>タグ（短いカテゴリ名）</label>
+        <input type="text" value="${esc(ad.tag)}" data-field="tag" data-id="${ad.id}" onchange="updateAdField('${ad.id}','tag',this.value)">
+      </div>
+      <div class="am-field full">
+        <label>会社名・タイトル</label>
+        <input type="text" value="${esc(ad.title)}" onchange="updateAdField('${ad.id}','title',this.value)">
+      </div>
+      <div class="am-field full">
+        <label>説明文（1〜2文）</label>
+        <input type="text" value="${esc(ad.desc)}" onchange="updateAdField('${ad.id}','desc',this.value)">
+      </div>
+      <div class="am-field">
+        <label>CTAボタン文言</label>
+        <input type="text" value="${esc(ad.cta)}" onchange="updateAdField('${ad.id}','cta',this.value)">
+      </div>
+      <div class="am-field">
+        <label>アクセントカラー</label>
+        <input type="color" value="${ad.color}" onchange="updateAdField('${ad.id}','color',this.value)">
+      </div>
+      <div class="am-field full">
+        <label>リンクURL</label>
+        <input type="url" value="${esc(ad.url)}" onchange="updateAdField('${ad.id}','url',this.value)">
+      </div>
+      <div class="am-field">
+        <label>表示スコア 最小</label>
+        <input type="number" min="1" max="10" value="${ad.scoreMin}" onchange="updateAdField('${ad.id}','scoreMin',Number(this.value))">
+      </div>
+      <div class="am-field">
+        <label>表示スコア 最大</label>
+        <input type="number" min="1" max="10" value="${ad.scoreMax}" onchange="updateAdField('${ad.id}','scoreMax',Number(this.value))">
+      </div>
+    </div>
+  `;
+  return el;
+}
+
+let _workingConfig = null;
+
+function getWorkingConfig() {
+  if (!_workingConfig) _workingConfig = JSON.parse(JSON.stringify(getAdConfig()));
+  return _workingConfig;
+}
+
+function updateAdField(id, field, value) {
+  const cfg = getWorkingConfig();
+  const ad = cfg.find(a => a.id === id);
+  if (ad) ad[field] = value;
+}
+
+function toggleAd(id, enabled) {
+  const cfg = getWorkingConfig();
+  const ad = cfg.find(a => a.id === id);
+  if (ad) ad.enabled = enabled;
+}
+
+function deleteAd(id) {
+  if (!confirm('この広告を削除しますか？')) return;
+  const cfg = getWorkingConfig();
+  const idx = cfg.findIndex(a => a.id === id);
+  if (idx >= 0) cfg.splice(idx, 1);
+  document.querySelector(`.am-card[data-id="${id}"]`)?.remove();
+}
+
+function addAd(scoreMin, scoreMax) {
+  const newId = 'ad-' + Date.now();
+  const newAd = {
+    id: newId, enabled: true,
+    scoreMin, scoreMax,
+    category: SCORE_BANDS.find(b=>b.min===scoreMin)?.label || 'カスタム',
+    categoryColor: SCORE_BANDS.find(b=>b.min===scoreMin)?.color || '#555',
+    icon: '🏢', tag: '新しい広告', title: '会社名を入力',
+    desc: '説明文を入力してください', cta: '詳しく見る',
+    color: '#5A5AB5', bg: '#F0F0FF', url: 'https://',
+  };
+  getWorkingConfig().push(newAd);
+  const container = document.querySelector(`#band-${scoreMin}-${scoreMax}`);
+  if (container) container.appendChild(buildAdCard(newAd));
+}
+
+function saveAdConfig() {
+  const cfg = getWorkingConfig();
+  saveAdConfigToStorage(cfg);
+  _workingConfig = null;
+  const msg = document.getElementById('am-saved-msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display='none', 2500);
+  renderAdManager(); // 再描画して件数バッジを更新
+}
+
+// ════════════════════════════════
+// REPORT
+// ════════════════════════════════
+function renderReport(r){
+  const score=Math.max(1,Math.min(10,Number(r.currentScore)||5));
+  const sc=score>=7?'var(--green)':score>=4?'var(--amber)':'var(--red)';
+  const today=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'});
+  const p=PERSONAS.find(x=>x.id===pid);
+
+  const painsH=(r.mainPain||[]).map(x=>`<div class="pi-row"><div class="pi-dot"></div><div class="rv">${esc(x)}</div></div>`).join('');
+  const actsH=(r.nextActions||[]).map((a,i)=>`<div class="ai-row"><span class="ai-n">${String(i+1).padStart(2,'0')}</span><span class="rv">${esc(a)}</span></div>`).join('');
+  const proH=r.needsPro?`<div class="pro"><span style="font-size:15px;flex-shrink:0">💛</span><div><div style="font-size:11px;font-weight:500;color:var(--warn-tx);margin-bottom:3px">専門家との面談もおすすめ</div><div style="font-size:11px;color:#9A7820;line-height:1.6">キャリアコーチやカウンセラーと話すと、もっと整理できるかも。</div></div></div>`:'';
+
+  const html=`<div class="report">
+    <div class="rh"><span style="font-size:19px">${p.icon}</span><div><div class="rt">ムリです レポート</div><div class="rd">${today} ・ ${p.name}との会話</div></div></div>
+    <div class="sw">
+      <div class="sw-top">
+        <div class="sr" style="border-color:${sc}"><span class="sn" style="color:${sc}">${score}</span><span class="sd">/ 10</span></div>
+        <div><div style="font-size:10px;color:var(--faint);margin-bottom:3px">今の気持ちスコア</div><div style="font-size:13px;line-height:1.6">${esc(r.emotion||'')}</div></div>
+      </div>
+      <div class="score-def">${esc(r.scoreDef||'')}</div>
+    </div>
+    <div class="rs"><div class="rl">📋 状況の整理</div><div class="rv">${esc(r.situation||'')}</div></div>
+    ${painsH?`<div class="rs"><div class="rl">💬 感じているつらさ</div>${painsH}</div>`:''}
+    ${actsH?`<div class="rs"><div class="rl">🚀 次にできること</div>${actsH}</div>`:''}
+    ${proH}
+    ${renderAdBlock(score)}
+    <div class="share-block">
+      <div class="share-label">📤 この結果をシェア</div>
+      <div class="share-preview">${buildSharePreview(score, p ? p.name : '', p ? p.icon : '', esc(r.message||''))}</div>
+      <div class="share-btns">
+        <a class="share-btn share-btn-x" href="#" id="share-x-btn" onclick="shareToX(${score},'${p ? p.name : ''}','${(r.message||'').replace(/'/g,'\'').replace(/\n/g,' ').slice(0,40)}');return false;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Xでシェア
+        </a>
+        <button class="share-btn share-btn-copy" id="copy-btn" onclick="copyShareText(${score},'${p ? p.name : ''}','${(r.message||'').replace(/'/g,'\'').replace(/\n/g,' ').slice(0,40)}')">
+          🔗 コピー
+        </button>
+      </div>
+    </div>
+    <div class="rf">スクリーンショットや印刷で保存できます</div>
+  </div>`;
+
+  const chat=document.getElementById('chat'), anchor=document.getElementById('anchor');
+  const el=document.createElement('div'); el.innerHTML=html;
+  chat.insertBefore(el,anchor);
+
+  // レポート後の選択肢 → 続けるか終了か
+  renderPostReportChoices();
+  scrollEnd();
+}
+
+// ════════════════════════════════
+// POST-REPORT: 続行 or 終了
+// ════════════════════════════════
+function renderPostReportChoices(){
+  const p=PERSONAS.find(x=>x.id===pid);
+  const msgs={
+    mom:  'まだ話したいこととかある？💕 いつでも聞くよ。',
+    friend:  'どうする〜？まだ話す？それとも終わり？😊',
+    counselor: '以上で整理は終わりますが、続けてお話しになりますか？',
+    gal:  'まだ話したいこととかある？💅 全然聞くよ！',
+    dog:  'ご主人様、まだ話したいことあるワン？🐾 ボクずっと聞くワン！',
+  };
+
+  const chat=document.getElementById('chat'), anchor=document.getElementById('anchor');
+  const el=document.createElement('div');
+  el.className='post-report-choices';
+  el.innerHTML=`<div class="prc-title">${esc(msgs[pid]||'まだ話しますか？')}</div>
+    <div class="prc-grid">
+      <button class="prc-btn" onclick="continueChat()"><span style="font-size:14px">💬</span>もう少し話を続ける</button>
+      <button class="prc-btn" onclick="endChat()"><span style="font-size:14px">✅</span>終了して評価する</button>
+    </div>`;
+  chat.insertBefore(el,anchor);
+  scrollEnd();
+}
+
+function continueChat(){
+  document.querySelectorAll('.post-report-choices').forEach(e=>e.remove());
+  done=false;
+  document.getElementById('input-area').style.display='block';
+  const p=PERSONAS.find(x=>x.id===pid);
+  const cont={
+    mom:'もちろん！何でも話してね 🤗',
+    friend:'わかった！話して話して😊',
+    counselor:'わかりました。続けましょう。',
+    gal:'いいよ〜！何でも話して🔥',
+    dog:'ワン！まだ聞くワン！🐾 何でも話してほしいワン！',
+  };
+  addAI(cont[pid]||'続けましょう。', false);
+  showChoices({text:cont[pid]||'続けて話してみて。',choices:['さっきの話をもう少し掘り下げたい','別の悩みについて話したい','今後の行動について相談したい','その他']});
+  scrollEnd();
+}
+
+function endChat(){
+  document.querySelectorAll('.post-report-choices').forEach(e=>e.remove());
+  document.getElementById('input-area').style.display='none';
+  hideChoices();
+  renderSatisfaction();
+}
+
+// ════════════════════════════════
+// SATISFACTION
+// ════════════════════════════════
+const GOOD_TAGS=['話しやすかった','共感してくれた','アドバイスが参考になった','気持ちが整理できた','選択肢がわかりやすかった'];
+const BAD_TAGS=['返答が長すぎる','選択肢が合わなかった','アドバイスが的外れ','もっと深掘りしてほしかった','人格がイメージと違った'];
+
+function renderSatisfaction(){
+  const p=PERSONAS.find(x=>x.id===pid);
+  const msgs={
+    mom:'どうだった？少し楽になれたかな？💕',
+    dad:'どうだった。正直に言ってみろ。',
+    sibling:'どうだった？役に立った？笑',
+    friend:'ちょっと聞いていい？どうだった？😊',
+    counselor:'本日のご相談はいかがでしたか？',
+    gal:'ねえねえ、どうだった！？💅',
+  };
+
+  const chat=document.getElementById('chat'), anchor=document.getElementById('anchor');
+  const el=document.createElement('div');
+  el.id='sat-card';
+  el.className='sat-card';
+  el.innerHTML=`
+    <div class="sat-title">${esc(msgs[pid]||'いかがでしたか？')}</div>
+    <div class="sat-sub">満足度を教えてください（任意）</div>
+    <div class="stars" id="stars">
+      ${'⭐'.repeat(5).split('').map((_,i)=>`<span class="star" data-i="${i+1}" onclick="setStar(${i+1})">⭐</span>`).join('')}
+    </div>
+    <div class="sat-section">
+      <div class="sat-label">👍 よかったこと</div>
+      <div class="tag-grid">${GOOD_TAGS.map(t=>`<button class="tag good" onclick="toggleTag(this,'good','${t}')">${t}</button>`).join('')}</div>
+    </div>
+    <div class="sat-section">
+      <div class="sat-label">💡 改善してほしいこと</div>
+      <div class="tag-grid">${BAD_TAGS.map(t=>`<button class="tag bad" onclick="toggleTag(this,'bad','${t}')">${t}</button>`).join('')}</div>
+    </div>
+    <div class="sat-section">
+      <div class="sat-label">💬 コメント（任意）</div>
+      <textarea class="sat-comment" id="sat-comment" rows="3" placeholder="自由にどうぞ…"></textarea>
+    </div>
+    <button class="sat-submit" onclick="submitSat()">送信する</button>
+  `;
+  chat.insertBefore(el,anchor);
+  scrollEnd();
+}
+
+function setStar(n){
+  satRating=n;
+  document.querySelectorAll('.star').forEach((s,i)=>{
+    s.classList.toggle('on', i<n);
+  });
+}
+
+function toggleTag(el,type,val){
+  el.classList.toggle('on');
+  if(type==='good'){
+    const idx=satGoodTags.indexOf(val);
+    idx>=0?satGoodTags.splice(idx,1):satGoodTags.push(val);
+  } else {
+    const idx=satBadTags.indexOf(val);
+    idx>=0?satBadTags.splice(idx,1):satBadTags.push(val);
+  }
+}
+
+function submitSat(){
+  const comment=document.getElementById('sat-comment').value.trim();
+  const fb={
+    sessionId:currentSessionId,
+    persona:pid,
+    turns:turnCount,
+    rating:satRating,
+    goodTags:[...satGoodTags],
+    badTags:[...satBadTags],
+    comment,
+  };
+  saveFeedback(fb);
+
+  const el=document.getElementById('sat-card');
+  el.innerHTML=`<div class="sat-done">ありがとうございます！フィードバックを保存しました ✅<br><span style="font-size:12px;color:var(--muted);margin-top:6px;display:block">「フィードバック」ボタンから集計を確認できます</span></div>`;
+  scrollEnd();
+}
+
+// ════════════════════════════════
+// FEEDBACK MODAL
+// ════════════════════════════════
+function openFbModal(){
+  renderFbStats();
+  document.getElementById('fb-modal').classList.add('open');
+}
+function closeFbModal(){
+  document.getElementById('fb-modal').classList.remove('open');
+}
+
+function renderFbStats(){
+  const all=loadFeedback();
+  const label=document.getElementById('fb-count-label');
+  const stats=document.getElementById('fb-stats');
+
+  if(all.length===0){
+    label.textContent='まだフィードバックはありません';
+    stats.innerHTML='';
+    return;
+  }
+
+  label.textContent=`${all.length}件のフィードバックが集まっています`;
+
+  const rated=all.filter(f=>f.rating>0);
+  const avg=rated.length>0?(rated.reduce((s,f)=>s+f.rating,0)/rated.length).toFixed(1):'-';
+  const stars='⭐'.repeat(Math.round(Number(avg)||0));
+
+  // タグ集計
+  const goodCount={}, badCount={};
+  all.forEach(f=>{
+    (f.goodTags||[]).forEach(t=>{ goodCount[t]=(goodCount[t]||0)+1; });
+    (f.badTags||[]).forEach(t=>{ badCount[t]=(badCount[t]||0)+1; });
+  });
+  const sortTags=(obj)=>Object.entries(obj).sort((a,b)=>b[1]-a[1]);
+
+  const goodTagsHTML=sortTags(goodCount).map(([t,n])=>`<span class="fb-tag" style="background:#E8F8F0;color:#1D7A5A">${t} (${n})</span>`).join('');
+  const badTagsHTML=sortTags(badCount).map(([t,n])=>`<span class="fb-tag" style="background:#FEF0ED;color:var(--accent)">${t} (${n})</span>`).join('');
+
+  const comments=all.filter(f=>f.comment).map(f=>`<div class="fb-comment-item">${esc(f.comment)}</div>`).join('');
+
+  // 人格別集計
+  const personaCounts={};
+  all.forEach(f=>{ personaCounts[f.persona]=(personaCounts[f.persona]||0)+1; });
+  const personaHTML=Object.entries(personaCounts).map(([id,n])=>{
+    const p=PERSONAS.find(x=>x.id===id);
+    return `<span class="fb-tag">${p?p.icon:''} ${p?p.name:id} (${n}回)</span>`;
+  }).join('');
+
+  stats.innerHTML=`
+    <div class="fb-stat">
+      <div class="fb-stat-title">⭐ 平均満足度</div>
+      <div><span class="fb-avg">${avg}</span><span style="font-size:13px;color:var(--muted)"> / 5.0 (${rated.length}件)</span></div>
+      <div style="font-size:18px;margin-top:4px">${stars}</div>
+    </div>
+    ${goodTagsHTML?`<div class="fb-stat"><div class="fb-stat-title">👍 よかったこと</div><div class="fb-tags">${goodTagsHTML}</div></div>`:''}
+    ${badTagsHTML?`<div class="fb-stat"><div class="fb-stat-title">💡 改善してほしいこと</div><div class="fb-tags">${badTagsHTML}</div></div>`:''}
+    ${personaHTML?`<div class="fb-stat"><div class="fb-stat-title">👤 よく選ばれる話し相手</div><div class="fb-tags">${personaHTML}</div></div>`:''}
+    ${comments?`<div class="fb-stat"><div class="fb-stat-title">💬 コメント一覧</div><div class="fb-comment-list">${comments}</div></div>`:''}
+  `;
+}
+
+async function genAISummary(){
+  const all=loadFeedback();
+  if(all.length===0){ alert('フィードバックがまだありません'); return; }
+
+  const box=document.getElementById('fb-ai-box');
+  const txt=document.getElementById('fb-ai-text');
+  box.style.display='block'; txt.textContent='生成中…';
+
+  const summary=JSON.stringify({
+    count:all.length,
+    avgRating:(all.filter(f=>f.rating>0).reduce((s,f)=>s+f.rating,0)/Math.max(1,all.filter(f=>f.rating>0).length)).toFixed(1),
+    topGood:Object.entries(all.reduce((a,f)=>{ (f.goodTags||[]).forEach(t=>{a[t]=(a[t]||0)+1;}); return a; },{})).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]),
+    topBad:Object.entries(all.reduce((a,f)=>{ (f.badTags||[]).forEach(t=>{a[t]=(a[t]||0)+1;}); return a; },{})).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]),
+    comments:all.filter(f=>f.comment).map(f=>f.comment).slice(-5),
+  });
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':'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'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:400,
+        messages:[{role:'user',content:`以下は「ムリです」へのユーザーフィードバック集計です。\n\n${summary}\n\nこのデータから：\n1. ユーザーが特に評価している点（2〜3点）\n2. 優先的に改善すべき点（2〜3点）\n3. 具体的な改善アクション提案（2〜3点）\n\nを簡潔にまとめてください。箇条書きで、合計200字以内で。`}]
+      })
+    });
+    const data=await res.json();
+    txt.textContent=(data.content?.[0]?.text||'生成できませんでした').trim();
+  }catch(e){
+    txt.textContent='生成に失敗しました。もう一度お試しください。';
+  }
+}
+
+// ════════════════════════════════
+// UTILS
+// ════════════════════════════════
+function setTyping(v){ document.getElementById('typing').style.display=v?'flex':'none'; }
+function updBtn(){ const i=document.getElementById('msg-inp'); document.getElementById('send-btn').disabled=!i.value.trim()||busy; }
+function scrollEnd(){ const chat=document.getElementById('chat'); const anchor=document.getElementById('anchor'); if(chat&&anchor){ setTimeout(()=>{ chat.scrollTop=chat.scrollHeight; },80); } }
+function resetSession(){ init(); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+
+// ════════════════════════════════
+// 管理者認証
+// ════════════════════════════════
+const ADMIN_PASSWORD = 'yamedoki2025'; // ← ここでパスワードを変更できます
+
+function isAdmin(){
+  return sessionStorage.getItem('yamedoki_admin') === '1';
+}
+
+function openAdminModal(){
+  if(isAdmin()){
+    // すでにログイン済みなら直接管理メニューを表示
+    showAdminButtons();
+    return;
+  }
+  document.getElementById('admin-pw-inp').value = '';
+  document.getElementById('admin-err').style.display = 'none';
+  document.getElementById('admin-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('admin-pw-inp').focus(), 100);
+}
+
+function closeAdminModal(){
+  document.getElementById('admin-modal').classList.remove('open');
+}
+
+function checkAdminPw(){
+  const val = document.getElementById('admin-pw-inp').value;
+  if(val === ADMIN_PASSWORD){
+    sessionStorage.setItem('yamedoki_admin','1');
+    closeAdminModal();
+    showAdminButtons();
+  } else {
+    document.getElementById('admin-err').style.display = 'block';
+    document.getElementById('admin-pw-inp').value = '';
+    document.getElementById('admin-pw-inp').focus();
+  }
+}
+
+function showAdminButtons(){
+  document.getElementById('fb-btn').style.display = 'block';
+  document.getElementById('ad-btn').style.display = 'block';
+  document.getElementById('admin-login-trigger').style.display = 'none';
+  // テストボタンを追加
+  const hbtns = document.getElementById('h-btns-inner') || document.querySelector('.h-btns');
+  if(hbtns && !document.getElementById('test-btn')){
+    const tb = document.createElement('button');
+    tb.id = 'test-btn';
+    tb.textContent = '🧪 テスト';
+    tb.style.cssText = 'background:transparent;border:1px solid #555;border-radius:6px;padding:4px 10px;color:#aaa;font-size:10px;cursor:pointer;font-family:inherit;transition:all .15s';
+    tb.onclick = toggleTestPanel;
+    hbtns.insertBefore(tb, document.getElementById('reset-btn'));
+  }
+  initTestPanel();
+}
+
+function toggleTestPanel(){
+  const p = document.getElementById('test-panel');
+  p.style.display = p.style.display === 'none' || p.style.display === '' ? 'block' : 'none';
+}
+
+function initTestPanel(){
+  const grid = document.getElementById('test-score-grid');
+  if(!grid || grid.children.length > 0) return;
+  for(let s = 1; s <= 10; s++){
+    const btn = document.createElement('button');
+    btn.className = 'ts-btn';
+    btn.textContent = s;
+    const scoreColor = s <= 3 ? '#F87171' : s <= 5 ? '#FB923C' : s <= 7 ? '#FBBF24' : '#4ADE80';
+    btn.style.borderColor = scoreColor + '55';
+    btn.style.color = scoreColor;
+    btn.onclick = () => forceShowReport(s);
+    grid.appendChild(btn);
+  }
+}
+
+function forceShowReport(score){
+  // テスト用の人格選択
+  const sel = document.getElementById('test-persona-sel');
+  const testPid = sel && sel.value ? sel.value : pid;
+  const origPid = pid;
+  pid = testPid;
+  const p = PERSONAS.find(x=>x.id===pid);
+
+  // スコアに応じたダミーデータを生成
+  const scoreLabels={1:'崩壊寸前',2:'限界突破',3:'危機的',4:'深刻',5:'消耗中',6:'転換点',7:'くすぶり中',8:'少し疲れている',9:'まあまあ元気',10:'全然大丈夫'};
+  const dummyReport = {
+    type: 'report',
+    situation: `【スコア${score}・${scoreLabels[score]}のテスト表示】上司との関係で強いストレスを感じており、毎日の業務に支障が出ている状況。職場の人間関係と労働条件の両面に課題がある。`,
+    mainPain: ['上司との関係が限界に達している','毎日の業務でストレスを感じている','職場の雰囲気が自分に合っていない'],
+    emotion: `スコア${score}（${scoreLabels[score]}）の状態でのテスト表示です`,
+    currentScore: score,
+    scoreDef: `${p ? p.scoreDesc : 'スコアの根拠'} → テストスコア${score}での表示確認`,
+    nextActions: [
+      `【スコア${score}向け】アクション1のテスト表示（${p ? p.actionTone : ''}）`,
+      `【スコア${score}向け】アクション2のテスト表示（広告カテゴリ確認用）`,
+      `【スコア${score}向け】アクション3のテスト表示`,
+    ],
+    needsPro: score <= 5,
+    message: `スコア${score}のテスト表示です。この人格（${p ? p.name : pid}）での表示・広告・アクションを確認してください。`
+  };
+
+  // チャットをリセットしてレポートを表示
+  done = true;
+  const chat = document.getElementById('chat');
+  const preserve = ['typing','anchor'];
+  Array.from(chat.children).forEach(el=>{ if(!preserve.includes(el.id)) el.remove(); });
+  document.getElementById('input-area').style.display = 'none';
+  hideChoices();
+
+  messages.push({role:'assistant', content: dummyReport.message});
+  addAI(`【🧪テストモード】スコア${score}（${scoreLabels[score]}）のレポートを表示中`, true);
+  renderReport(dummyReport);
+  renderPostReportChoices();
+
+  pid = origPid;
+  document.getElementById('test-panel').style.display = 'none';
+  scrollEnd();
+}
+
+// ページロード時：セッション継続中なら管理ボタンを表示
+if(isAdmin()) showAdminButtons();
+
+// ════════════════════════════════
+// シェア機能
+// ════════════════════════════════
+// スコアラベル・絵文字
+const SCORE_LABELS={1:'崩壊寸前',2:'限界突破',3:'危機的',4:'深刻',5:'消耗中',6:'転換点',7:'くすぶり中',8:'少し疲れている',9:'まあまあ元気',10:'全然大丈夫'};
+const SCORE_EMOJI={1:'😭',2:'😭',3:'😭',4:'😔',5:'😔',6:'🤔',7:'🤔',8:'😊',9:'😊',10:'✨'};
+
+// シェア用テキスト生成（Xツイート・コピー共通）
+function buildShareText(score, personaName, personaIcon, message){
+  const label = SCORE_LABELS[score] || '';
+  const emoji  = SCORE_EMOJI[score]  || '😊';
+  const icon   = personaIcon || '';
+  // 一言コメントは40文字以内に切り詰め
+  const comment = message ? message.replace(/\n/g,' ').slice(0, 40) + (message.length > 40 ? '…' : '') : '';
+  return [
+    `職場ストレス診断してみた ${emoji}`,
+    ``,
+    `━━━━━━━━━━━━━━`,
+    `🔢 気持ちスコア：${score}/10（${label}）`,
+    `${icon} 話し相手：${personaName}`,
+    comment ? `💬 「${comment}」` : '',
+    `━━━━━━━━━━━━━━`,
+    ``,
+    `#ムリです #職場ストレス #辞め時 #仕事辞めたい`,
+    `https://letstalk-companystress.netlify.app/`,
+  ].filter(Boolean).join('\n');
+}
+
+// プレビューHTML生成（シェアブロック内に表示）
+function buildSharePreview(score, personaName, personaIcon, message){
+  const label = SCORE_LABELS[score] || '';
+  const emoji  = SCORE_EMOJI[score]  || '😊';
+  const comment = message ? message.replace(/\n/g,' ').slice(0, 40) + (message.length > 40 ? '…' : '') : '';
+  return `<span class="share-preview-score">${emoji} ${score}/10（${label}）</span>\n` +
+    `${personaIcon} 話し相手：${personaName}\n` +
+    (comment ? `💬 「${comment}」\n` : '') +
+    `<span class="share-preview-tag">#ムリです</span><span class="share-preview-tag">#職場ストレス</span><span class="share-preview-tag">#辞め時</span>`;
+}
+
+function shareToX(score, personaName, message){
+  const p = PERSONAS.find(x=>x.id===pid);
+  const text = buildShareText(score, personaName, p ? p.icon : '', message||'');
+  const url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text);
+  window.open(url, '_blank', 'noopener');
+}
+
+function copyShareText(score, personaName, message){
+  const p = PERSONAS.find(x=>x.id===pid);
+  const text = buildShareText(score, personaName, p ? p.icon : '', message||'');
+  const doFallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  };
+  const showCopied = () => {
+    const btn = document.getElementById('copy-btn');
+    if(btn){ btn.textContent = '✅ コピーしました'; btn.classList.add('copied');
+      setTimeout(()=>{ btn.textContent = '🔗 コピー'; btn.classList.remove('copied'); }, 2000); }
+  };
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(showCopied).catch(()=>{ doFallback(); showCopied(); });
+  } else { doFallback(); showCopied(); }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  renderPersonaBar();
+  document.getElementById('msg-inp').addEventListener('input',updBtn);
+  document.getElementById('msg-inp').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doSend();} });
+  document.getElementById('other-inp').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendOther();} });
+  init();
+});
+</script>
+</body>
+</html>
