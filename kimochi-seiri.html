@@ -364,6 +364,13 @@ header{background:var(--dark);padding:11px 16px;display:flex;align-items:center;
 
 <script>
 // ════════════════════════════════
+// CLOUDFLARE WORKER URL
+// ════════════════════════════════
+// Cloudflare WorkersのURLをここに設定する
+// 例: https://murides-api.ユーザー名.workers.dev
+const WORKER_URL = 'YOUR_WORKER_URL_HERE'; // ← Cloudflareデプロイ後にURLを設定
+
+// ════════════════════════════════
 // PERSONAS
 // ════════════════════════════════
 const PERSONAS = [
@@ -629,9 +636,9 @@ async function callAPI(userText){
   }
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch(WORKER_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':'YOUR_API_KEY_HERE'},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:buildSystem(),messages:hist})
     });
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1395,9 +1402,9 @@ async function genAISummary(){
   });
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch(WORKER_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':'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'},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:400,
