@@ -110,7 +110,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,250,247,
   <!-- フォーム -->
   <div class="card">
     <div class="card-title">📩 お問い合わせフォーム</div>
-    <form action="https://api.web3forms.com/submit" method="POST" onsubmit="submitForm(event)">
+    <form action="https://api.web3forms.com/submit" method="POST" onsubmit="submitForm(event); return false;">
       <input type="hidden" name="access_key" value="b0a00b42-a38c-4214-8fad-a4a13bac6a15">
       <input type="hidden" name="subject" value="【ムリです】掲載のお問い合わせが届きました">
       <input type="hidden" name="redirect" value="false">
@@ -184,27 +184,41 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,250,247,
 <script>
 function submitForm(e){
   e.preventDefault();
+  e.stopPropagation();
   const form = e.target;
   const btn = document.getElementById('cf-submit-btn');
   btn.disabled = true;
   btn.innerHTML = '<span>送信中…</span>';
+
+  const formData = new FormData(form);
+  const data = {};
+  formData.forEach((value, key) => { data[key] = value; });
+
   fetch('https://api.web3forms.com/submit', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-    body: JSON.stringify(Object.fromEntries(new FormData(form)))
-  }).then(r => r.json()).then(data => {
-    if(data.success){
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(res.success){
       form.style.display = 'none';
       document.getElementById('cf-success').style.display = 'block';
       window.scrollTo({top:0, behavior:'smooth'});
     } else {
-      throw new Error(data.message);
+      throw new Error(res.message || '送信エラー');
     }
-  }).catch(()=>{
+  })
+  .catch(err => {
+    console.error('送信エラー:', err);
     btn.disabled = false;
     btn.innerHTML = '<span>📩</span> 送信する';
     alert('送信に失敗しました。時間をおいて再度お試しください。');
   });
+  return false;
 }
 </script>
 </body>
